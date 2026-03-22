@@ -1,0 +1,61 @@
+<template>
+    <div v-if="isLoading" class="text-center my-16">
+        <v-progress-circular indeterminate />
+        <br />
+        <br />
+        <span>Fetching Fantasy Points...</span>
+    </div>
+    <div v-else>
+        <Leaderboard :teampoints="teamPoints" />
+        <TeamBreakdown v-for="team in teamPoints" :props="{
+            fantasyPlayers,
+            teamPoint: team,
+            replacements: season.replacements
+        }" />
+    </div>
+
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+import { fetchLatestPoints, getLatestMatchNumber, type FantasyPlayers } from '../logic/fantasy-player';
+import { calculatePointsForTeam, calculatePreviousPointsForTeam, Season, SEASONS, type TeamWithPoints } from '../logic/teams';
+import Leaderboard from './Leaderboard.vue';
+import TeamBreakdown from './TeamBreakdown.vue';
+
+const props = defineProps<{ season: Season }>();
+const season = props.season;
+
+const isLoading = ref(true);
+
+const teamPoints: TeamWithPoints[] = [];
+let fantasyPlayers: FantasyPlayers;
+
+fetchLatestPoints(season.year)
+    .then((fp) => {
+        console.log(fp)
+        for (const team of season.teams) {
+            teamPoints.push({
+                ...team,
+                points: calculatePointsForTeam(team, fp, season.replacements),
+                previousPoints: calculatePreviousPointsForTeam(team, fp, season.replacements)
+            })
+            fantasyPlayers = fp;
+        }
+
+        teamPoints.sort((t1, t2) => t2.points - t1.points)
+        isLoading.value = false;
+    });
+
+function getLatestMatchString() {
+    const matchNumber = getLatestMatchNumber();
+    switch (matchNumber) {
+        case "71": return "Qualifier 1";
+        case "72": return "Eliminator";
+        case "73": return "Qualifier 2";
+        case "74": return "Final";
+        default: return `Match ${matchNumber}`;
+    }
+}
+
+</script>

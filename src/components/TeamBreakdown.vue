@@ -59,7 +59,7 @@
 
 <script setup lang="ts">
 import type { FantasyPlayerObject, FantasyPlayers } from '@/logic/fantasy-player';
-import { calculatePointsForPlayer, Replacements, type TeamWithPoints } from '@/logic/teams';
+import { calculatePointsForPlayer, type TeamWithPoints } from '@/logic/teams';
 import { getGrowthClass, getGrowthSign } from '@/styles/styles';
 
 
@@ -69,7 +69,8 @@ const p = defineProps<{
     // Hence I have resorted to one prop with two properties
     props: {
         fantasyPlayers: FantasyPlayers,
-        teamPoint: TeamWithPoints
+        teamPoint: TeamWithPoints,
+        replacements: Record<number, number>
     }
 }>();
 
@@ -87,26 +88,16 @@ interface PlayerInTeamBreakdown {
 const players: PlayerInTeamBreakdown[] = teamPoint.auction.map((auctionItem, index) => ({
     index: index + 1,
     player: fantasyPlayers[auctionItem.playerId],
-    points: calculatePointsForPlayer(auctionItem.playerId, fantasyPlayers),
+    points: calculatePointsForPlayer(auctionItem.playerId, fantasyPlayers, p.props.replacements),
     price: auctionItem.price,
     replacements: getReplacements(auctionItem.playerId),
 }));
 
-// for (let i = 0; i < teamPoint.auction.length; i++) {
-//     const auction = teamPoint.auction[i];
-//     let pid = auction.playerId;
-//     const p = fantasyPlayers[pid];
-//     players.push({ index: i + 1, player: p, price: auction.price });
-
-//     while (Replacements[pid]) {
-//         players.push({
-//             index: 0,
-//             player: fantasyPlayers[Replacements[pid]],
-//             price: 0
-//         });
-//         pid = Replacements[pid];
-//     }
+// const log = {
+//     "team": p.props.teamPoint.name,
+//     "playerPoints": players
 // }
+// console.log(log)
 
 const descending = players.slice().sort((a, b) => b.points - a.points);
 
@@ -137,20 +128,20 @@ function getPriceIndicator(price: number): string {
     return '';
 }
 
-function getPoints(p: PlayerInTeamBreakdown): number {
-    return calculatePointsForPlayer(p.player.Id, fantasyPlayers);
+function getPoints(pitb: PlayerInTeamBreakdown): number {
+    return calculatePointsForPlayer(pitb.player.Id, fantasyPlayers, p.props.replacements);
 }
 
 function getReplacements(playerId: number): number[] {
     const replacements: number[] = [];
 
-    let rep = Replacements[playerId];
+    let rep = p.props.replacements[playerId];
     while (rep) {
         replacements.push(rep);
-        rep = Replacements[rep];
+        rep = p.props.replacements[rep];
     }
 
-    if(replacements.length > 0) {
+    if (replacements.length > 0) {
         replacements.unshift(playerId); // Add to start
     }
 

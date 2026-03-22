@@ -8,7 +8,11 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    History: typeof import('./src/components/History.vue')['default']
     Leaderboard: typeof import('./src/components/Leaderboard.vue')['default']
+    Season: typeof import('./src/components/Season.vue')['default']
+    SeasonPoints: typeof import('./src/components/SeasonPoints.vue')['default']
     TeamBreakdown: typeof import('./src/components/TeamBreakdown.vue')['default']
+    TeamRank: typeof import('./src/components/TeamRank.vue')['default']
   }
 }

@@ -1,9 +1,7 @@
 <template>
     <v-container>
         <v-card class="pt-4">
-            <v-sparkline type="bar" auto-draw smooth 
-            line-width="8":gradient="gradient" 
-            gradient-direction="right"
+            <v-sparkline type="bar" auto-draw smooth line-width="8" :gradient="gradient" gradient-direction="right"
                 :model-value="teamRanks.map((t) => t.points)" :labels="teamRanks.map((t) => t.name)" label-size=5>
             </v-sparkline>
             <v-table class="mt-4" hover>
@@ -75,6 +73,10 @@ const teamRanks: {
         lead: i < props.teampoints.length - 1 ? tp.points - props.teampoints[i + 1].points : -1,
         growth: tp.points - tp.previousPoints,
     }));
+
+
+// console.log("Leaderboard:")
+// console.log(teamRanks);
 
 const gradient = ['#f72047', '#ffd200', '#1feaea'];
 
