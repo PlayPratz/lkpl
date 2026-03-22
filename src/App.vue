@@ -52,11 +52,11 @@
 </template>
 
 <script setup lang="ts">
-import { useTheme } from 'vuetify/lib/composables/theme';
 import { THEME } from './logic/theme';
 import { ref } from 'vue';
-import { Season, SEASONS } from './logic/teams';
+import { type Season, SEASONS } from './logic/teams';
 import SeasonPoints from './components/SeasonPoints.vue';
+import { useTheme } from 'vuetify';
 
 const theme = useTheme();
 function toggleTheme() {
@@ -65,7 +65,7 @@ function toggleTheme() {
   THEME.saveTheme(theme.global.current.value.dark ? 1 : 0);
 }
 
-const selectedSeason = ref<Season>();
+const selectedSeason = ref<Season | null>(null);
 
 const isScrolledTop = ref(true);
 addEventListener("scroll", () => {
@@ -75,7 +75,7 @@ function scrollToTop() {
   scrollTo({ top: 0 });
 }
 
-function onSetSeason(s: Season) {
+function onSetSeason(s: Season | null) {
   selectedSeason.value = s;
 }
 

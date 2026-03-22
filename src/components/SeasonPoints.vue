@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { fetchLatestPoints, getLatestMatchNumber, type FantasyPlayers } from '../logic/fantasy-player';
-import { calculatePointsForTeam, calculatePreviousPointsForTeam, Season, SEASONS, type TeamWithPoints } from '../logic/teams';
+import { calculatePointsForTeam, calculatePreviousPointsForTeam, type Season, type TeamWithPoints } from '../logic/teams';
 import Leaderboard from './Leaderboard.vue';
 import TeamBreakdown from './TeamBreakdown.vue';
 
