@@ -343,6 +343,7 @@ const Season2026: Season = {
         }, {
             name: "ANIKET",
             retentions: [
+                { playerId: 67905, retentionNumber: 1 },
             ],
             auction: [
             ]
@@ -358,7 +359,9 @@ const Season2026: Season = {
             ]
         }, {
             name: "CHAITANYA",
-            retentions: [],
+            retentions: [
+
+            ],
             auction: [
             ]
         }, {
