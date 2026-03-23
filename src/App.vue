@@ -1,8 +1,8 @@
 <template>
   <v-app>
     <v-app-bar flat density="compact">
-      <v-btn icon="mdi-chevron-left" v-if="selectedSeason" @click="onSetSeason(null)" />
-      <v-app-bar-title v-if="selectedSeason">Season {{ selectedSeason.year }}</v-app-bar-title>
+      <v-btn v-if="selectedSeason" icon="mdi-chevron-left" @click="() => { $router.push({ name: 'seasons' }) }" />
+      <v-app-bar-title v-if="selectedSeason">Season {{ selectedSeason }}</v-app-bar-title>
       <v-app-bar-title v-else>Select a Season</v-app-bar-title>
       <!-- <a v-if="!isLoading" :href="getLatestMatchLink(season.year)" target="_blank" class="text-secondary">
         <v-btn class="rounded-pill" variant="outlined">
@@ -13,16 +13,7 @@
       <v-btn @click="toggleTheme" icon="mdi-theme-light-dark" class="ms-2" />
     </v-app-bar>
     <v-main>
-      <SeasonPoints v-if="selectedSeason" :season="selectedSeason" />
-      <div v-else class="text-center">
-        <v-list lines="one">
-          <v-list-item v-for="season in SEASONS" :key="season.year" @click="() => onSetSeason(season)">
-            <v-list-item-content>
-              <v-list-item-title>{{ season.year }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </div>
+      <RouterView />
     </v-main>
     <v-fab app color="primary" location="bottom right" icon="mdi-arrow-up" @click="scrollToTop"
       :active="!isScrolledTop" />
@@ -53,9 +44,8 @@
 
 <script setup lang="ts">
 import { THEME } from './logic/theme';
-import { ref } from 'vue';
-import { type Season, SEASONS } from './logic/teams';
-import SeasonPoints from './components/SeasonPoints.vue';
+import { ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import { useTheme } from 'vuetify';
 
 const theme = useTheme();
@@ -65,7 +55,12 @@ function toggleTheme() {
   THEME.saveTheme(theme.global.current.value.dark ? 1 : 0);
 }
 
-const selectedSeason = ref<Season | null>(null);
+const selectedSeason = ref<number | null>(null);
+const route = useRoute();
+
+watch(() => route.params.year, (year) => {
+  selectedSeason.value = +year;
+})
 
 const isScrolledTop = ref(true);
 addEventListener("scroll", () => {
@@ -75,8 +70,5 @@ function scrollToTop() {
   scrollTo({ top: 0 });
 }
 
-function onSetSeason(s: Season | null) {
-  selectedSeason.value = s;
-}
 
 </script>

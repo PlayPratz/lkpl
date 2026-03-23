@@ -19,15 +19,19 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { fetchLatestPoints, getLatestMatchNumber, type FantasyPlayers } from '../logic/fantasy-player';
-import { calculatePointsForTeam, calculatePreviousPointsForTeam, type Season, type TeamWithPoints } from '../logic/teams';
-import Leaderboard from './Leaderboard.vue';
-import TeamBreakdown from './TeamBreakdown.vue';
+import { calculatePointsForTeam, calculatePreviousPointsForTeam, SEASONS, type TeamWithPoints } from '../logic/teams';
+import Leaderboard from '../components/Leaderboard.vue';
+import TeamBreakdown from '../components/TeamBreakdown.vue';
+import { router } from '@/router';
 
-const props = defineProps<{ season: Season }>();
-const season = props.season;
+const year = +router.currentRoute.value.params.year;
+const season = SEASONS[year];
+
+if (!season) {
+    router.replace("/lkpl");
+}
 
 const isLoading = ref(true);
-
 const teamPoints: TeamWithPoints[] = [];
 let fantasyPlayers: FantasyPlayers;
 

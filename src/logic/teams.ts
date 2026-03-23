@@ -403,7 +403,7 @@ const Season2026: Season = {
     }
 }
 
-export const SEASONS = [
-    Season2026,
-    Season2025,
-]
+export const SEASONS = {
+    [Season2026.year]: Season2026,
+    [Season2025.year]: Season2025,
+}

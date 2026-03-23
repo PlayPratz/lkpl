@@ -9,7 +9,10 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Leaderboard: typeof import('./src/components/Leaderboard.vue')['default']
+    RouterLink: typeof import('vue-router')['RouterLink']
+    RouterView: typeof import('vue-router')['RouterView']
     SeasonPoints: typeof import('./src/components/SeasonPoints.vue')['default']
+    SeasonView: typeof import('./src/components/SeasonView.vue')['default']
     TeamBreakdown: typeof import('./src/components/TeamBreakdown.vue')['default']
   }
 }
