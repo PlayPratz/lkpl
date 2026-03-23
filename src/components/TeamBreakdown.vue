@@ -31,7 +31,8 @@
                                 </div>
                             </div>
                         </td>
-                        <td>{{ getPoints(p) }}
+                        <td>
+                            {{ getPoints(p) }}
                             <small v-if="p.player.GamedayPoints !== 0" :class="getGrowthClass(p.player.GamedayPoints)">
                                 ({{ getGrowthSign(p.player.GamedayPoints) }}{{ p.player.GamedayPoints }})
                             </small>
@@ -51,7 +52,7 @@
                     <tr class="text-primary">
                         <td></td>
                         <td>TOTAL</td>
-                        <td><b>{{ teamPoint.points }}</b></td>
+                        <td class="">{{ teamPoint.points }}</td>
                         <td class="d-none d-sm-table-cell"></td>
                         <td class="d-none d-sm-table-cell"></td>
                     </tr>
@@ -66,7 +67,7 @@
 import { getPlayerImageUrl, type FantasyPlayerObject, type FantasyPlayers } from '@/logic/fantasy-player';
 import { calculatePointsForPlayer, type TeamWithPoints } from '@/logic/teams';
 import { getGrowthClass, getGrowthSign } from '@/styles/styles';
-
+import { onMounted } from 'vue';
 
 const p = defineProps<{
     // For some reason I am unable to pass two props
@@ -75,7 +76,8 @@ const p = defineProps<{
     props: {
         fantasyPlayers: FantasyPlayers,
         teamPoint: TeamWithPoints,
-        replacements: Record<number, number>
+        replacements: Record<number, number>,
+        setCanClick: (teamPoint: TeamWithPoints) => void
     }
 }>();
 
@@ -91,14 +93,14 @@ interface PlayerInTeamBreakdown {
     replacements: number[]
 }
 
-const players: PlayerInTeamBreakdown[] = teamPoint.retentions.map((retentionItem, index) => ({
+const players: PlayerInTeamBreakdown[] = teamPoint.retentions ? teamPoint.retentions.map((retentionItem, index) => ({
     index: index + 1,
     player: fantasyPlayers[retentionItem.playerId],
     isRetained: true,
     points: calculatePointsForPlayer(retentionItem.playerId, fantasyPlayers, p.props.replacements),
     price: 0,
     replacements: getReplacements(retentionItem.playerId),
-}));
+})) : [];
 
 players.push(...teamPoint.auction.map((auctionItem, index) => ({
     index: index + 1,
@@ -108,14 +110,6 @@ players.push(...teamPoint.auction.map((auctionItem, index) => ({
     price: auctionItem.price,
     replacements: getReplacements(auctionItem.playerId),
 })));
-
-
-
-// const log = {
-//     "team": p.props.teamPoint.name,
-//     "playerPoints": players
-// }
-// console.log(log)
 
 const descending = players.slice().sort((a, b) => b.points - a.points);
 
@@ -176,5 +170,9 @@ function getReplacements(playerId: number): number[] {
 
     return replacements;
 }
+
+onMounted(() => {
+    p.props.setCanClick(teamPoint);
+});
 
 </script>

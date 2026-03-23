@@ -12,4 +12,6 @@
 
 <script setup lang="ts">
 import { SEASONS } from '@/logic/teams';
+
+document.title = `LKPL Fantasy`;
 </script>

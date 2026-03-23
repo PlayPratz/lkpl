@@ -1,9 +1,10 @@
 <template>
-    <v-container>
-        <v-sparkline type="bar" auto-draw smooth line-width="8" :gradient="gradient" gradient-direction="right"
-            :model-value="teamRanks.map((t) => t.points)" :labels="teamRanks.map((t) => t.name)" label-size=5>
+    <v-container id="leaderboard">
+        <v-sparkline v-if="teamRanks.some((t) => t.points > 0)" type="bar" auto-draw smooth line-width="8"
+            :gradient="gradient" gradient-direction="right" :model-value="teamRanks.map((t) => t.points)"
+            :labels="teamRanks.map((t) => t.name)" label-size=5>
         </v-sparkline>
-        <v-card class="bg-primary" border="primary sm opacity-100">
+        <v-card class="mt-2 bg-primary" border="primary sm opacity-100">
             <v-table hover>
                 <thead>
                     <tr class="bg-primary">
@@ -20,13 +21,16 @@
                             <small :class="getGrowthClass(t.rankGrowth)">
                                 ({{ getGrowthSign(t.rankGrowth) }}{{ t.rankGrowth }})
                             </small>
-
                         </td>
                         <td>
-                            <router-link class="text-primary text-decoration-none" :to="{}">
+                            <router-link v-if="canClick[t.name]" class="text-primary text-decoration-none"
+                                :to="{ name: 'season-view', params: { team: t.name.toLowerCase() }, replace: true }">
                                 {{ t.name }}
                                 <v-icon class="text-secondary" icon="mdi-arrow-right-thin" />
                             </router-link>
+                            <v-else v-else>
+                                {{ t.name }}
+                            </v-else>
                         </td>
                         <td>
                             {{ t.points }}
@@ -52,20 +56,23 @@ import { getGrowthClass, getGrowthSign } from "@/styles/styles";
 import type { TeamWithPoints } from "../logic/teams";
 import { RouterLink } from "vue-router";
 
-const props = defineProps<{ teampoints: TeamWithPoints[] }>();
-const teampoints = props.teampoints;
-
-const ranks = getRanks(teampoints.map((tp) => tp.points));
-const prevRanks = getRanks(teampoints.map((tp) => tp.previousPoints));
-
-const teamRanks: {
+interface TeamLeaderboardView {
     rank: number,
     rankGrowth: number,
     name: string,
     points: number,
     growth: number,
     lead: number,
-}[] = teampoints
+    canClick: boolean
+}
+
+const props = defineProps<{ teampoints: TeamWithPoints[], canClick: Record<string, boolean> }>();
+const teampoints = props.teampoints;
+
+const ranks = getRanks(teampoints.map((tp) => tp.points));
+const prevRanks = getRanks(teampoints.map((tp) => tp.previousPoints));
+
+const teamRanks: TeamLeaderboardView[] = teampoints
     .map((tp, i) => ({
         rank: ranks[i],
         rankGrowth: prevRanks[i] - ranks[i],
@@ -73,8 +80,8 @@ const teamRanks: {
         points: tp.points,
         lead: i < props.teampoints.length - 1 ? tp.points - props.teampoints[i + 1].points : -1,
         growth: tp.points - tp.previousPoints,
+        canClick: document.getElementById(tp.name.toLocaleLowerCase()) !== null
     }));
-
 
 // console.log("Leaderboard:")
 // console.log(teamRanks);
@@ -95,8 +102,6 @@ function getRanks(numbers: number[]): number[] {
             ranks[sortedCopy[i].index] = i + 1;
         }
     }
-
     return Object.values(ranks);
 }
-
 </script>

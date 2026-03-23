@@ -3,7 +3,7 @@ import type { FantasyPlayerObject, FantasyPlayers } from "./fantasy-player";
 export interface Team {
     name: string;
     auction: AuctionItem[];
-    retentions: RetentionItem[];
+    retentions: RetentionItem[] | null;
 }
 
 interface AuctionItem {
@@ -18,7 +18,7 @@ interface RetentionItem {
 
 export function getPlayersIdsForTeam(team: Team): number[] {
     return [
-        ...team.retentions.map((r) => r.playerId),
+        ...team.retentions?.map((r) => r.playerId) ?? [],
         ...team.auction.map((a) => a.playerId),
     ];
 }
@@ -77,7 +77,7 @@ export function calculatePointsForPlayer(playerId: number | undefined, points: F
 }
 
 function getPlayerIdsForTeam(team: Team): number[] {
-    const retentions = team.retentions.map((r) => r.playerId);
+    const retentions = team.retentions?.map((r) => r.playerId) ?? [];
     const auction = team.auction.map((a) => a.playerId);
     return [...retentions, ...auction];
 }
@@ -329,7 +329,7 @@ const Season2026: Season = {
             ]
         }, {
             name: "RUTASH",
-            retentions: [],
+            retentions: null,
             auction: [
             ],
         }, {
@@ -343,7 +343,7 @@ const Season2026: Season = {
             ],
         }, {
             name: "KONARK",
-            retentions: [],
+            retentions: null,
             auction: [
             ]
         }, {
@@ -355,12 +355,12 @@ const Season2026: Season = {
             ]
         }, {
             name: "JUGAL",
-            retentions: [],
+            retentions: null,
             auction: [
             ],
         }, {
             name: "ADVAY",
-            retentions: [],
+            retentions: null,
             auction: [
             ]
         }, {
@@ -374,12 +374,12 @@ const Season2026: Season = {
             ]
         }, {
             name: "SAAHIL",
-            retentions: [],
+            retentions: null,
             auction: [
             ]
         }, {
             name: "SIDDHANTH",
-            retentions: [],
+            retentions: null,
             auction: [
             ]
         }
