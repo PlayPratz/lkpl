@@ -72,6 +72,11 @@ async function fetchPointsInner(tourgamedayId: number): Promise<FantasyPlayerObj
     return points;
 }
 
+
+export function getPlayerImageUrl(playerId: number): string {
+    return `https://fantasy.iplt20.com/classic/static-assets/build/images/players/onpitch/${playerId}.png`;
+}
+
 function getMatchesUrl(year: number): string {
     return `https://ipl-stats-sports-mechanic.s3.ap-south-1.amazonaws.com/ipl/feeds/stats/${year}-matchlinks.js`;
 }
@@ -128,7 +133,6 @@ function getProxy(index: number): string {
     else if (index === 2) return CORS_PROXY_CORSLOL;
     else return "";
 }
-
 
 // Historic
 

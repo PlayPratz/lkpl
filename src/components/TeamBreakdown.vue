@@ -15,13 +15,24 @@
                 <tbody>
                     <tr v-for="p in players">
                         <td>{{ p.index }}</td>
-                        <td>{{ p.player.Name }} {{ getOverseasIndicator(p.player) }}
-                            <template v-for="replacement in p.replacements">
-                                <br />
-                                <small>{{ fantasyPlayers[replacement].Name }}</small>
-                            </template>
-                            <div class="d-sm-none text-primary">
-                                {{ p.player.TeamShortName }}
+                        <td>
+                            <div class="d-flex align-items-center my-1">
+                                <div class="my-auto border border-primary rounded-circle overflow-hidden"
+                                    style="width: 48px; height: 48px;"
+                                    :background-image="`url(${getPlayerImageUrl(p.player.Id)})`">
+                                    <img class="img-fluid" style="height: 48px; align-self: center;"
+                                        :src="getPlayerImageUrl(p.player.Id)" alt="Player Image" />
+                                </div>
+                                <div class="ms-2 my-auto">
+                                    {{ p.player.Name }} {{ getOverseasIndicator(p.player) }}
+                                    <template v-for="replacement in p.replacements">
+                                        <br />
+                                        <small>{{ fantasyPlayers[replacement].Name }}</small>
+                                    </template>
+                                    <div class="d-sm-none text-primary">
+                                        {{ p.player.TeamShortName }}
+                                    </div>
+                                </div>
                             </div>
                         </td>
                         <td>{{ getPoints(p) }}
@@ -58,7 +69,7 @@
 </template>
 
 <script setup lang="ts">
-import type { FantasyPlayerObject, FantasyPlayers } from '@/logic/fantasy-player';
+import { getPlayerImageUrl, type FantasyPlayerObject, type FantasyPlayers } from '@/logic/fantasy-player';
 import { calculatePointsForPlayer, type TeamWithPoints } from '@/logic/teams';
 import { getGrowthClass, getGrowthSign } from '@/styles/styles';
 
@@ -108,7 +119,7 @@ function getPointIndicator(p: PlayerInTeamBreakdown): string {
     if (p.player.OverallPoints == highest) {
         return '🥇';
     } else if (!topElevenIds.includes(p.player.Id)) {
-        return '🔻';
+        return '❌';
     }
 
     return '';
