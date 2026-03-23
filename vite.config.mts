@@ -16,7 +16,9 @@ export default defineConfig({
       template: { transformAssetUrls },
     }),
     // https://github.com/vuetifyjs/vuetify-loader/tree/master/packages/vite-plugin#readme
-    Vuetify(),
+    Vuetify({
+      styles: { configFile: 'src/styles/styles.scss' },
+    }),
     Components(),
     ViteFonts({
       google: {

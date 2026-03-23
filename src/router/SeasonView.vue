@@ -7,7 +7,7 @@
     </div>
     <div v-else>
         <Leaderboard :teampoints="teamPoints" />
-        <TeamBreakdown v-for="team in teamPoints" :props="{
+        <TeamBreakdown v-for="team in teamPoints.filter((t) => getPlayersIdsForTeam(t).length > 0)" :props="{
             fantasyPlayers,
             teamPoint: team,
             replacements: season.replacements
@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { fetchLatestPoints, getLatestMatchNumber, type FantasyPlayers } from '../logic/fantasy-player';
-import { calculatePointsForTeam, calculatePreviousPointsForTeam, SEASONS, type TeamWithPoints } from '../logic/teams';
+import { calculatePointsForTeam, calculatePreviousPointsForTeam, getPlayersIdsForTeam, SEASONS, type TeamWithPoints } from '../logic/teams';
 import Leaderboard from '../components/Leaderboard.vue';
 import TeamBreakdown from '../components/TeamBreakdown.vue';
 import { router } from '@/router';
@@ -28,7 +28,7 @@ const year = +router.currentRoute.value.params.year;
 const season = SEASONS[year];
 
 if (!season) {
-    router.replace("/lkpl");
+    router.replace({ name: 'seasons' });
 }
 
 const isLoading = ref(true);

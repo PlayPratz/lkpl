@@ -1,6 +1,6 @@
 <template>
-  <v-app>
-    <v-app-bar flat density="compact">
+  <v-app class="some-class">
+    <v-app-bar flat density="compact" color="secondary">
       <v-btn v-if="selectedSeason" icon="mdi-chevron-left" @click="() => { $router.push({ name: 'seasons' }) }" />
       <v-app-bar-title v-if="selectedSeason">Season {{ selectedSeason }}</v-app-bar-title>
       <v-app-bar-title v-else>Select a Season</v-app-bar-title>
@@ -15,7 +15,7 @@
     <v-main>
       <RouterView />
     </v-main>
-    <v-fab app color="primary" location="bottom right" icon="mdi-arrow-up" @click="scrollToTop"
+    <v-fab app color="secondary" location="bottom right" icon="mdi-arrow-up" @click="scrollToTop"
       :active="!isScrolledTop" />
     <!-- <v-bottom-navigation mode="shift" value="leaderboard" mandatory="force" @update:model-value="(v) => console.log(v)">
       <v-btn value="leaderboard">
@@ -28,13 +28,11 @@
         <span>Stats</span>
       </v-btn>
     </v-bottom-navigation> -->
-    <v-footer>
-      <div class="text-caption">
-        <span class="text-disabled">developed by</span>
-        <span class="text-decoration-none on-surface">
-          Pratik Nerurkar
-        </span>
-      </div>
+    <v-footer class="text-label-medium" style="max-height: 48px;">
+      <span class="text-disabled">developed by</span>
+      <span class="text-decoration-none on-surface ms-1">
+        Pratik Nerurkar
+      </span>
     </v-footer>
   </v-app>
 

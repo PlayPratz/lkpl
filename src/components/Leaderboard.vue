@@ -1,10 +1,10 @@
 <template>
     <v-container>
-        <v-card class="pt-4">
-            <v-sparkline type="bar" auto-draw smooth line-width="8" :gradient="gradient" gradient-direction="right"
-                :model-value="teamRanks.map((t) => t.points)" :labels="teamRanks.map((t) => t.name)" label-size=5>
-            </v-sparkline>
-            <v-table class="mt-4" hover>
+        <v-sparkline type="bar" auto-draw smooth line-width="8" :gradient="gradient" gradient-direction="right"
+            :model-value="teamRanks.map((t) => t.points)" :labels="teamRanks.map((t) => t.name)" label-size=5>
+        </v-sparkline>
+        <v-card class="bg-primary" border="primary sm opacity-100">
+            <v-table hover>
                 <thead>
                     <tr class="bg-primary">
                         <th>#</th>
@@ -25,7 +25,7 @@
                         <td>
                             <a class="text-primary text-decoration-none" :href="`#${t.name.toLowerCase()}`">
                                 {{ t.name }}
-                                <v-icon class="text-secondary">mdi-arrow-right-thin</v-icon>
+                                <v-icon class="text-secondary" icon="mdi-arrow-right-thin" />
                             </a>
                         </td>
                         <td>

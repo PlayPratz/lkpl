@@ -16,11 +16,17 @@ interface RetentionItem {
     retentionNumber: number;
 }
 
+export function getPlayersIdsForTeam(team: Team): number[] {
+    return [
+        ...team.retentions.map((r) => r.playerId),
+        ...team.auction.map((a) => a.playerId),
+    ];
+}
+
 export interface TeamWithPoints extends Team {
     points: number;
     previousPoints: number;
 }
-
 
 type Replacements = Record<number, number>;
 

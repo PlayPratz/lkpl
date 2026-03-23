@@ -1,14 +1,14 @@
 <template>
     <v-container :id="teamPoint.name.toLowerCase()">
-        <v-card class="bg-secondary pt-2">
-            <h4 class="text-center">{{ teamPoint.name }}</h4>
-            <v-table hover>
+        <v-card border="primary sm opacity-100">
+            <div class="py-2 text-center bg-primary">{{ teamPoint.name }}</div>
+            <v-table hover density="compact">
                 <thead>
-                    <tr class="bg-secondary">
+                    <tr class="text-primary">
                         <th style="width: 10%;">#</th>
                         <th>Player</th>
                         <th style="width: 30%;">Points</th>
-                        <th class="d-none d-sm-table-cell" style="width: 10%;">Price (₹cr)</th>
+                        <th class="d-none d-sm-table-cell" style="width: 15%;">Price (₹cr)</th>
                         <th class="d-none d-sm-table-cell" style="width: 10%;">Team</th>
                     </tr>
                 </thead>
@@ -17,12 +17,8 @@
                         <td>{{ p.index }}</td>
                         <td>
                             <div class="d-flex align-items-center my-1">
-                                <div class="my-auto border border-primary rounded-circle overflow-hidden"
-                                    style="width: 48px; height: 48px;"
-                                    :background-image="`url(${getPlayerImageUrl(p.player.Id)})`">
-                                    <img class="img-fluid" style="height: 48px; align-self: center;"
-                                        :src="getPlayerImageUrl(p.player.Id)" alt="Player Image" />
-                                </div>
+                                <v-avatar style="width: 48px; height: 48px;" :image="getPlayerImageUrl(p.player.Id)"
+                                    border="primary sm opacity-25" />
                                 <div class="ms-2 my-auto">
                                     {{ p.player.Name }} {{ getOverseasIndicator(p.player) }}
                                     <template v-for="replacement in p.replacements">
@@ -52,9 +48,9 @@
                         <td class="d-none d-sm-table-cell"> {{ getPriceString(p, "NumberOnly") }}</td>
                         <td class="d-none d-sm-table-cell">{{ p.player.TeamShortName }}</td>
                     </tr>
-                    <tr class="bg-primary">
+                    <tr class="text-primary">
                         <td></td>
-                        <td><b>TOTAL</b></td>
+                        <td>TOTAL</td>
                         <td><b>{{ teamPoint.points }}</b></td>
                         <td class="d-none d-sm-table-cell"></td>
                         <td class="d-none d-sm-table-cell"></td>
