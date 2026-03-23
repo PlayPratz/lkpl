@@ -81,18 +81,18 @@ const teamRanks: {
 const gradient = ['#f72047', '#ffd200', '#1feaea'];
 
 function getRanks(numbers: number[]): number[] {
-    const sortedCopy = numbers.slice(0)
+    const sortedCopy = numbers.slice()
         .map((x, i) => ({ index: i, value: x }))
         .sort((a, b) => b.value - a.value);
 
     const ranks: Record<number, number> = {};
 
     for (let i = 0; i < sortedCopy.length; i++) {
-        let rank = i;
-        if (i === 0 || sortedCopy[i].value !== sortedCopy[i - 1].value)
-            rank = i + 1;
-
-        ranks[sortedCopy[i].index] = rank;
+        if (i > 0 && sortedCopy[i].value === sortedCopy[i - 1].value) {
+            ranks[sortedCopy[i].index] = ranks[sortedCopy[i - 1].index];
+        } else {
+            ranks[sortedCopy[i].index] = i + 1;
+        }
     }
 
     return Object.values(ranks);
