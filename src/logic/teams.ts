@@ -119,7 +119,7 @@ const Season2025: Season = {
                 { playerId: 101907, price: 1.5 },
                 { playerId: 71151, price: 0.5 },
                 { playerId: 115918, price: 0.5 },
-                { playerId: 9782, price: 13.5 },
+                { playerId: 63187, price: 11.5 },
                 { playerId: 63788, price: 5.5 },
                 { playerId: 67887, price: 1 },
                 { playerId: 66516, price: 0.5 },
@@ -360,7 +360,9 @@ const Season2026: Season = {
         }, {
             name: "CHAITANYA",
             retentions: [
-
+                { playerId: 11803, retentionNumber: 1 },
+                { playerId: 60122, retentionNumber: 2 },
+                { playerId: 66799, retentionNumber: 3 },
             ],
             auction: [
             ]

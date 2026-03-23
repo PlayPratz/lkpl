@@ -14,11 +14,11 @@
     </v-app-bar>
     <v-main>
       <SeasonPoints v-if="selectedSeason" :season="selectedSeason" />
-      <div v-else>
+      <div v-else class="text-center">
         <v-list lines="one">
-          <v-list-item v-for="item in SEASONS" :key="item.year" @click="() => onSetSeason(item)">
+          <v-list-item v-for="season in SEASONS" :key="season.year" @click="() => onSetSeason(season)">
             <v-list-item-content>
-              <v-list-item-title>{{ item.year }}</v-list-item-title>
+              <v-list-item-title>{{ season.year }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
