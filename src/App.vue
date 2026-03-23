@@ -24,8 +24,8 @@
         </v-list>
       </div>
     </v-main>
-    <!-- <v-fab v-if="!isLoading" app color="primary" location="bottom right" icon="mdi-arrow-up" @click="scrollToTop"
-      :active="!isScrolledTop" /> -->
+    <v-fab app color="primary" location="bottom right" icon="mdi-arrow-up" @click="scrollToTop"
+      :active="!isScrolledTop" />
     <!-- <v-bottom-navigation mode="shift" value="leaderboard" mandatory="force" @update:model-value="(v) => console.log(v)">
       <v-btn value="leaderboard">
         <v-icon>mdi-format-list-numbered</v-icon>

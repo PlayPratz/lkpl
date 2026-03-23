@@ -34,7 +34,17 @@ const FANTASY_POINTS_URL = "https://fantasy.iplt20.com/classic/api/feed/gamedayp
 export async function fetchLatestPoints(year: number): Promise<FantasyPlayers> {
 
     if (year === 2025) {
-        return Season2025;
+        return FantasyPoints2025;
+    } else if (year === 2026) {
+        const FP2026: FantasyPlayers = {};
+        for (const key in FantasyPoints2025) {
+            FP2026[key] = {
+                ...FantasyPoints2025[key],
+                OverallPoints: 0,
+                GamedayPoints: 0,
+            };
+        }
+        return FP2026;
     }
 
     const start = await fetchMatchCount(year);
@@ -136,7 +146,7 @@ function getProxy(index: number): string {
 
 // Historic
 
-const Season2025 = {
+const FantasyPoints2025: FantasyPlayers = {
     "3676": { "CapSelectedPer": 1.25, "GamedayPoints": 0, "IS_FP": "0", "Id": 3676, "IsActive": 1, "IsAnnounced": "", "Name": "MS Dhoni", "OverallPoints": 440, "PlayerDesc": "null", "PlyrGamedayId": 74, "ProfileUrl": "null", "SelectedPer": 7.33, "ShortName": "MS Dhoni", "SkillId": 4, "SkillName": "WICKET KEEPER", "TeamId": 1108, "TeamName": "Chennai Super Kings", "TeamShortName": "CSK", "VCapSelectedPer": 0.65, "Value": 8.5, "inCAPPlayer": "0", "isImpactPlayer": 0, "isInjured": "0", "isUnCap": 0 },
     "3850": { "CapSelectedPer": 0.34, "GamedayPoints": 0, "IS_FP": "0", "Id": 3850, "IsActive": 1, "IsAnnounced": "", "Name": "Ravindra Jadeja", "OverallPoints": 750, "PlayerDesc": "null", "PlyrGamedayId": 74, "ProfileUrl": "null", "SelectedPer": 6.24, "ShortName": "Ravindra Jadeja", "SkillId": 3, "SkillName": "ALL ROUNDER", "TeamId": 1108, "TeamName": "Chennai Super Kings", "TeamShortName": "CSK", "VCapSelectedPer": 0.87, "Value": 10, "inCAPPlayer": "0", "isImpactPlayer": 0, "isInjured": "0", "isUnCap": 0 },
     "3852": { "CapSelectedPer": 1.69, "GamedayPoints": 0, "IS_FP": "0", "Id": 3852, "IsActive": 1, "IsAnnounced": "", "Name": "Rohit Sharma", "OverallPoints": 623, "PlayerDesc": "null", "PlyrGamedayId": 74, "ProfileUrl": "null", "SelectedPer": 9.27, "ShortName": "Rohit Sharma", "SkillId": 1, "SkillName": "BATSMAN", "TeamId": 1111, "TeamName": "Mumbai Indians", "TeamShortName": "MI", "VCapSelectedPer": 1.27, "Value": 9.5, "inCAPPlayer": "0", "isImpactPlayer": 0, "isInjured": "0", "isUnCap": 0 },

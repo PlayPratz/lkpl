@@ -46,12 +46,10 @@
                             </template>
                             <small class="d-sm-none text-secondary">
                                 <br />
-                                ₹{{ p.price }}cr{{ getPriceIndicator(p.price) }}
+                                {{ getPriceString(p, "Currency") }}
                             </small>
                         </td>
-                        <td class="d-none d-sm-table-cell"> {{ p.price ? p.price : '🩹' }} {{
-                            getPriceIndicator(p.price) }}
-                        </td>
+                        <td class="d-none d-sm-table-cell"> {{ getPriceString(p, "NumberOnly") }}</td>
                         <td class="d-none d-sm-table-cell">{{ p.player.TeamShortName }}</td>
                     </tr>
                     <tr class="bg-primary">
@@ -91,18 +89,31 @@ const teamPoint = p.props.teamPoint;
 interface PlayerInTeamBreakdown {
     index: number,
     player: FantasyPlayerObject,
+    isRetained: boolean,
     points: number,
     price: number,
     replacements: number[]
 }
 
-const players: PlayerInTeamBreakdown[] = teamPoint.auction.map((auctionItem, index) => ({
+const players: PlayerInTeamBreakdown[] = teamPoint.retentions.map((retentionItem, index) => ({
+    index: index + 1,
+    player: fantasyPlayers[retentionItem.playerId],
+    isRetained: true,
+    points: calculatePointsForPlayer(retentionItem.playerId, fantasyPlayers, p.props.replacements),
+    price: 0,
+    replacements: getReplacements(retentionItem.playerId),
+}));
+
+players.push(...teamPoint.auction.map((auctionItem, index) => ({
     index: index + 1,
     player: fantasyPlayers[auctionItem.playerId],
+    isRetained: false,
     points: calculatePointsForPlayer(auctionItem.playerId, fantasyPlayers, p.props.replacements),
     price: auctionItem.price,
     replacements: getReplacements(auctionItem.playerId),
-}));
+})));
+
+
 
 // const log = {
 //     "team": p.props.teamPoint.name,
@@ -112,11 +123,11 @@ const players: PlayerInTeamBreakdown[] = teamPoint.auction.map((auctionItem, ind
 
 const descending = players.slice().sort((a, b) => b.points - a.points);
 
-const topElevenIds = descending.slice(0, 11).map((p) => p.player.Id);
-const highest = descending[0].points;
+const topElevenIds = descending.slice(0, 11).map((p) => p.player.Id)
+const highest = descending.length > 0 ? descending[0].points : 0;
 
 function getPointIndicator(p: PlayerInTeamBreakdown): string {
-    if (p.player.OverallPoints == highest) {
+    if (p.player.OverallPoints === highest && highest > 0) {
         return '🥇';
     } else if (!topElevenIds.includes(p.player.Id)) {
         return '❌';
@@ -132,7 +143,18 @@ function getOverseasIndicator(p: FantasyPlayerObject): string {
     return '';
 }
 
-const mostExpensive = teamPoint.auction.map((a) => a.price).reduce((p, c) => p > c ? p : c);
+const mostExpensive = teamPoint.auction.length > 0 ? teamPoint.auction.map((a) => a.price).reduce((p, c) => p > c ? p : c) : 0.5;
+
+function getPriceString(player: PlayerInTeamBreakdown, view: "NumberOnly" | "Currency"): string {
+    if (player.isRetained) {
+        return '🔁'
+    }
+
+    if (view === "Currency") {
+        return `₹${player.price}cr ${getPriceIndicator(player.price)}`;
+    } else
+        return `${player.price} ${getPriceIndicator(player.price)}`;
+}
 
 function getPriceIndicator(price: number): string {
     if (price === mostExpensive) return '💰';
