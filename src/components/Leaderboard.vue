@@ -23,10 +23,10 @@
 
                         </td>
                         <td>
-                            <a class="text-primary text-decoration-none" :href="`#${t.name.toLowerCase()}`">
+                            <router-link class="text-primary text-decoration-none" :to="{}">
                                 {{ t.name }}
                                 <v-icon class="text-secondary" icon="mdi-arrow-right-thin" />
-                            </a>
+                            </router-link>
                         </td>
                         <td>
                             {{ t.points }}
@@ -50,6 +50,7 @@
 
 import { getGrowthClass, getGrowthSign } from "@/styles/styles";
 import type { TeamWithPoints } from "../logic/teams";
+import { RouterLink } from "vue-router";
 
 const props = defineProps<{ teampoints: TeamWithPoints[] }>();
 const teampoints = props.teampoints;

@@ -1,7 +1,7 @@
 <template>
     <v-list lines="one" class="my-auto text-center">
         <v-list-item v-for="season in Object.values(SEASONS).reverse()" :key="season.year"
-            :to="{ name: 'seasonview', params: { year: season.year } }" class="text-decoration-none">
+            :to="{ name: 'season-view', params: { year: season.year } }" class="text-decoration-none pa-4">
             <v-list-item-title class="text-headline-large">
                 {{ season.year }}
             </v-list-item-title>
