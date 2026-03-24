@@ -18,7 +18,15 @@
                 </thead>
                 <tbody>
                     <tr v-for="q in players" :key="q.player.Id">
-                        <td>{{ q.index }}</td>
+                        <td>
+                            {{ q.index }}
+                            <v-badge
+                                v-if="q.isRetained"
+                                inline
+                                icon="mdi-repeat"
+                                color="warning"
+                            />
+                        </td>
                         <td>
                             <div class="d-flex align-items-center my-1">
                                 <v-avatar
@@ -101,11 +109,9 @@
                     <tr class="text-primary">
                         <td></td>
                         <td>TOTAL</td>
-                        <td class="text-title-medium">
+                        <td class="text-title-medium" colspan="3">
                             {{ teamPoint.points }}
                         </td>
-                        <td class="d-none d-sm-table-cell"></td>
-                        <td class="d-none d-sm-table-cell"></td>
                     </tr>
                 </tbody>
             </v-table>
@@ -197,7 +203,7 @@
         view: "NumberOnly" | "Currency",
     ): string {
         if (player.isRetained) {
-            return "🔁";
+            return "—";
         }
 
         if (view === "Currency") {
