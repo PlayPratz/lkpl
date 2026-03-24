@@ -18,7 +18,7 @@ interface RetentionItem {
 
 export function getPlayersIdsForTeam(team: Team): number[] {
     return [
-        ...team.retentions?.map((r) => r.playerId) ?? [],
+        ...(team.retentions?.map((r) => r.playerId) ?? []),
         ...team.auction.map((a) => a.playerId),
     ];
 }
@@ -36,44 +36,73 @@ export interface Season {
     replacements: Replacements;
 }
 
-export function calculatePointsForTeam(team: Team, points: FantasyPlayers, replacements: Replacements): number {
-    return calculatePointsForTeamInner(team, points, (p) => calculatePointsForPlayer(p.Id, points, replacements));
+export function calculatePointsForTeam(
+    team: Team,
+    points: FantasyPlayers,
+    replacements: Replacements,
+): number {
+    return calculatePointsForTeamInner(team, points, (p) =>
+        calculatePointsForPlayer(p.Id, points, replacements),
+    );
 }
 
-export function calculatePreviousPointsForTeam(team: Team, points: FantasyPlayers, replacements: Replacements): number {
-    return calculatePointsForTeamInner(team, points, (p) => calculatePointsForPlayer(p.Id, points, replacements) - p.GamedayPoints);
+export function calculatePreviousPointsForTeam(
+    team: Team,
+    points: FantasyPlayers,
+    replacements: Replacements,
+): number {
+    return calculatePointsForTeamInner(
+        team,
+        points,
+        (p) =>
+            calculatePointsForPlayer(p.Id, points, replacements) -
+            p.GamedayPoints,
+    );
 }
 
-function calculatePointsForTeamInner(team: Team, points: FantasyPlayers, calculatePoints: (p: FantasyPlayerObject) => number): number {
+function calculatePointsForTeamInner(
+    team: Team,
+    points: FantasyPlayers,
+    calculatePoints: (p: FantasyPlayerObject) => number,
+): number {
     const players = getPlayersForTeam(team, points);
     const penalty = calculatePenaltyForTeam(team, players);
 
-    const totalPoints =
-        players
-            .map(calculatePoints)
-            .sort((a, b) => b - a) // Sort descending
-            .slice(0, 11) // Take top 11
-            .reduce((sum, value) => sum + value, 0); // Add all values
+    const totalPoints = players
+        .map(calculatePoints)
+        .sort((a, b) => b - a) // Sort descending
+        .slice(0, 11) // Take top 11
+        .reduce((sum, value) => sum + value, 0); // Add all values
 
     return totalPoints - penalty;
 }
 
-function calculatePenaltyForTeam(team: Team, players: FantasyPlayerObject[]): number {
+function calculatePenaltyForTeam(
+    team: Team,
+    players: FantasyPlayerObject[],
+): number {
     const overseas_players = players.filter((p) => p.IS_FP === "1");
 
     if (overseas_players.length > 7) {
-        console.log(`Penalty applicable for ${team.name}`)
+        console.log(`Penalty applicable for ${team.name}`);
         return Math.min(...overseas_players.map((p) => p.OverallPoints));
     }
 
     return 0;
 }
 
-export function calculatePointsForPlayer(playerId: number | undefined, points: FantasyPlayers, replacements: Replacements): number {
+export function calculatePointsForPlayer(
+    playerId: number | undefined,
+    points: FantasyPlayers,
+    replacements: Replacements,
+): number {
     if (!playerId) {
         return 0;
     }
-    return points[playerId].OverallPoints + calculatePointsForPlayer(replacements[playerId], points, replacements);
+    return (
+        points[playerId].OverallPoints +
+        calculatePointsForPlayer(replacements[playerId], points, replacements)
+    );
 }
 
 function getPlayerIdsForTeam(team: Team): number[] {
@@ -82,7 +111,10 @@ function getPlayerIdsForTeam(team: Team): number[] {
     return [...retentions, ...auction];
 }
 
-function getPlayersForTeam(team: Team, points: FantasyPlayers): FantasyPlayerObject[] {
+function getPlayersForTeam(
+    team: Team,
+    points: FantasyPlayers,
+): FantasyPlayerObject[] {
     const playerIds = getPlayerIdsForTeam(team);
     return Object.values(points).filter((p) => playerIds.includes(p.Id));
 }
@@ -109,8 +141,9 @@ const Season2025: Season = {
                 { playerId: 68027, price: 1.5 },
                 { playerId: 88542, price: 1 },
                 { playerId: 66819, price: 0.5 },
-            ]
-        }, {
+            ],
+        },
+        {
             name: "RUTASH",
             retentions: [],
             auction: [
@@ -130,7 +163,8 @@ const Season2025: Season = {
                 { playerId: 67887, price: 1 },
                 { playerId: 66516, price: 0.5 },
             ],
-        }, {
+        },
+        {
             name: "PRATIK",
             retentions: [],
             auction: [
@@ -150,7 +184,8 @@ const Season2025: Season = {
                 { playerId: 66243, price: 1.5 },
                 { playerId: 58101, price: 1.5 },
             ],
-        }, {
+        },
+        {
             name: "KONARK",
             retentions: [],
             auction: [
@@ -169,8 +204,9 @@ const Season2025: Season = {
                 { playerId: 3993, price: 17 },
                 { playerId: 67476, price: 0.5 },
                 { playerId: 71376, price: 0.5 },
-            ]
-        }, {
+            ],
+        },
+        {
             name: "ANIKET",
             retentions: [],
             auction: [
@@ -189,8 +225,9 @@ const Season2025: Season = {
                 { playerId: 69409, price: 6.5 },
                 { playerId: 10094, price: 6.5 },
                 { playerId: 70296, price: 1.5 },
-            ]
-        }, {
+            ],
+        },
+        {
             name: "NISHANT",
             retentions: [],
             auction: [
@@ -209,8 +246,9 @@ const Season2025: Season = {
                 { playerId: 67516, price: 1.5 },
                 { playerId: 100564, price: 0.5 },
                 { playerId: 71366, price: 0.5 },
-            ]
-        }, {
+            ],
+        },
+        {
             name: "JUGAL",
             retentions: [],
             auction: [
@@ -230,7 +268,8 @@ const Season2025: Season = {
                 { playerId: 64440, price: 3.5 },
                 { playerId: 63961, price: 27 },
             ],
-        }, {
+        },
+        {
             name: "ADVAY",
             retentions: [],
             auction: [
@@ -249,8 +288,9 @@ const Season2025: Season = {
                 { playerId: 65702, price: 1 },
                 { playerId: 67778, price: 5 },
                 { playerId: 70324, price: 2 },
-            ]
-        }, {
+            ],
+        },
+        {
             name: "CHAITANYA",
             retentions: [],
             auction: [
@@ -269,8 +309,9 @@ const Season2025: Season = {
                 { playerId: 61738, price: 0.5 },
                 { playerId: 67910, price: 1 },
                 { playerId: 69659, price: 10 },
-            ]
-        }, {
+            ],
+        },
+        {
             name: "SAAHIL",
             retentions: [],
             auction: [
@@ -288,9 +329,9 @@ const Season2025: Season = {
                 { playerId: 64511, price: 4.5 },
                 { playerId: 65295, price: 2 },
                 { playerId: 4555, price: 4.5 },
-                { playerId: 63748, price: 1 }
-            ]
-        }
+                { playerId: 63748, price: 1 },
+            ],
+        },
     ],
 
     replacements: {
@@ -314,75 +355,70 @@ const Season2025: Season = {
         90501: 74400, // Mayank Yadav: Will O' Rourke
         // DC
         70746: 63881, // Jake Fraser-McGurk: Mustafizur Rehman
-    }
-}
+    },
+};
 
 const Season2026: Season = {
     year: 2026,
     teams: [
         {
             name: "ARJUN",
-            retentions: [
-                { playerId: 69500, retentionNumber: 1 },
-            ],
-            auction: [
-            ]
-        }, {
+            retentions: [{ playerId: 69500, retentionNumber: 1 }],
+            auction: [],
+        },
+        {
             name: "RUTASH",
             retentions: null,
-            auction: [
-            ],
-        }, {
+            auction: [],
+        },
+        {
             name: "PRATIK",
             retentions: [
                 { playerId: 3852, retentionNumber: 1 },
                 { playerId: 62023, retentionNumber: 2 },
                 { playerId: 59736, retentionNumber: 3 },
             ],
-            auction: [
-            ],
-        }, {
+            auction: [],
+        },
+        {
             name: "KONARK",
             retentions: null,
-            auction: [
-            ]
-        }, {
+            auction: [],
+        },
+        {
             name: "ANIKET",
-            retentions: [
-                { playerId: 67905, retentionNumber: 1 },
-            ],
-            auction: [
-            ]
-        }, {
+            retentions: [{ playerId: 67905, retentionNumber: 1 }],
+            auction: [],
+        },
+        {
             name: "JUGAL",
             retentions: null,
-            auction: [
-            ],
-        }, {
+            auction: [],
+        },
+        {
             name: "ADVAY",
             retentions: null,
-            auction: [
-            ]
-        }, {
+            auction: [],
+        },
+        {
             name: "CHAITANYA",
             retentions: [
                 { playerId: 11803, retentionNumber: 1 },
                 { playerId: 60122, retentionNumber: 2 },
                 { playerId: 66799, retentionNumber: 3 },
             ],
-            auction: [
-            ]
-        }, {
+            auction: [],
+        },
+        {
             name: "SAAHIL",
             retentions: null,
-            auction: [
-            ]
-        }, {
+            auction: [],
+        },
+        {
             name: "SIDDHANTH",
             retentions: null,
-            auction: [
-            ]
-        }
+            auction: [],
+        },
     ],
 
     replacements: {
@@ -406,10 +442,10 @@ const Season2026: Season = {
         90501: 74400, // Mayank Yadav: Will O' Rourke
         // DC
         70746: 63881, // Jake Fraser-McGurk: Mustafizur Rehman
-    }
-}
+    },
+};
 
 export const SEASONS = {
     [Season2026.year]: Season2026,
     [Season2025.year]: Season2025,
-}
+};

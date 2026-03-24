@@ -5,10 +5,10 @@ function saveTheme(themeId: number) {
 }
 
 function loadTheme(): number {
-    return parseInt(localStorage.getItem(KEY_THEME) ?? '0');
+    return parseInt(localStorage.getItem(KEY_THEME) ?? "0");
 }
 
 export const THEME = {
     saveTheme,
-    loadTheme
-}
+    loadTheme,
+};
