@@ -7,19 +7,64 @@
             <v-table hover density="compact">
                 <thead>
                     <tr class="text-primary">
-                        <th style="width: 10%">#</th>
-                        <th style="padding-left: 72px">Player</th>
-                        <th style="width: 30%">Points</th>
+                        <th style="width: 10%">
+                            <v-btn
+                                variant="text"
+                                density="compact"
+                                size="32"
+                                :append-icon="getSortIcon('slot')"
+                                @click="() => props.onSortBy('slot')"
+                                >#</v-btn
+                            >
+                        </th>
+                        <th style="padding-left: 56px">
+                            <v-btn
+                                variant="text"
+                                density="compact"
+                                size="32"
+                                :append-icon="getSortIcon('playername')"
+                                min-width="0"
+                                @click="() => props.onSortBy('playername')"
+                                >Player</v-btn
+                            >
+                        </th>
+                        <th style="width: 30%">
+                            <v-btn
+                                variant="text"
+                                density="compact"
+                                size="32"
+                                :append-icon="getSortIcon('points')"
+                                @click="() => props.onSortBy('points')"
+                                >Points</v-btn
+                            >
+                        </th>
                         <th class="d-none d-sm-table-cell" style="width: 15%">
-                            Price (₹cr)
+                            <v-btn
+                                variant="text"
+                                density="compact"
+                                size="32"
+                                :append-icon="getSortIcon('price')"
+                                @click="() => props.onSortBy('price')"
+                                >Price (₹cr)</v-btn
+                            >
                         </th>
                         <th class="d-none d-sm-table-cell" style="width: 10%">
-                            Team
+                            <v-btn
+                                variant="text"
+                                density="compact"
+                                size="32"
+                                :append-icon="getSortIcon('iplTeam')"
+                                @click="() => props.onSortBy('iplTeam')"
+                                >IPL Team</v-btn
+                            >
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="q in team.players" :key="q.fantasy_player_id">
+                    <tr
+                        v-for="q in team.players.sort(sortPlayers)"
+                        :key="q.fantasy_player_id"
+                    >
                         <td>
                             {{ q.slot_number }}
                             <v-badge
@@ -109,6 +154,12 @@
                         </td>
                         <td class="d-none d-sm-table-cell">
                             {{ getPriceString(q, "NumberOnly") }}
+                            <v-badge
+                                v-if="q.price_rank === 1"
+                                color="secondary"
+                                inline
+                                icon="mdi-currency-rupee"
+                            />
                         </td>
                         <td class="d-none d-sm-table-cell">
                             {{ q.ipl_team }}
@@ -135,9 +186,17 @@
     const props = defineProps<{
         team: Team;
         setCanClick: (team: Team) => void;
+        sort: SortSettings;
+        onSortBy: (parameter: SortParameter) => void;
     }>();
 
     const team = props.team;
+
+    type SortParameter = "slot" | "playername" | "points" | "price" | "iplTeam";
+    type SortSettings = {
+        parameter: SortParameter;
+        direction: number;
+    };
 
     onMounted(() => {
         props.setCanClick(team);
@@ -152,12 +211,41 @@
         }
 
         if (view === "Currency") {
-            return `₹${player.price}cr ${getPriceIndicator(player.price_rank)}`;
-        } else return `${player.price} ${getPriceIndicator(player.price_rank)}`;
+            return `₹${player.price}cr`;
+        } else return `${player.price}`;
     }
 
-    function getPriceIndicator(price_rank: number): string {
-        if (price_rank === 1) return "💰";
-        return "";
+    function getSortIcon(parameter: SortParameter): string {
+        if (props.sort.parameter === parameter) {
+            if (props.sort.direction > 0) return "mdi-arrow-up";
+            else return "mdi-arrow-down";
+        }
+        return "mdi-circle-small";
+    }
+
+    function sortPlayers(a: SignedPlayer, b: SignedPlayer): number {
+        let sortValue;
+        switch (props.sort.parameter) {
+            case "slot":
+                sortValue = a.slot_number - b.slot_number;
+                break;
+            case "playername":
+                sortValue = a.player_name.localeCompare(b.player_name);
+                break;
+            case "points":
+                sortValue = a.points - b.points;
+                break;
+            case "price":
+                sortValue = a.price - b.price;
+                break;
+            case "iplTeam":
+                sortValue = a.ipl_team.localeCompare(b.ipl_team);
+                break;
+        }
+        // Tie-breaker
+        if (sortValue === 0) {
+            sortValue = a.slot_number - b.slot_number;
+        }
+        return sortValue * props.sort.direction;
     }
 </script>

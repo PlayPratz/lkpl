@@ -16,6 +16,8 @@
             )"
             :key="team.team"
             :team="team"
+            :sort="sort"
+            :on-sort-by="onSortBy"
             :set-can-click="setCanClick"
         />
     </div>
@@ -46,7 +48,6 @@
     }
 
     document.title = `Season ${season!.season_year} | LKPL Fantasy`;
-
     let seasonOverview: SeasonOverview;
 
     getSeasonOverview(season!.name).then((so) => {
@@ -54,6 +55,25 @@
         seasonOverview.teams.sort((a, b) => a.rank - b.rank);
         isLoading.value = false;
     });
+
+    type sortParameter = "slot" | "playername" | "points" | "price" | "iplTeam";
+
+    type SortSettings = {
+        parameter: sortParameter;
+        direction: number;
+    };
+
+    const sort = ref<SortSettings>({ parameter: "slot", direction: 1 });
+    function onSortBy(parameter: sortParameter): void {
+        if (sort.value.parameter == parameter) {
+            sort.value.direction = sort.value.direction * -1;
+        } else {
+            sort.value = {
+                parameter,
+                direction: 1,
+            };
+        }
+    }
 
     function scrollToTeam(team: string) {
         const element = document.getElementById(team);
