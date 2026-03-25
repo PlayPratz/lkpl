@@ -397,7 +397,7 @@ const Season2026: Season = {
         },
         {
             name: "ADVAY",
-            retentions: null,
+            retentions: [{ playerId: 61837, retentionNumber: 1 }],
             auction: [],
         },
         {
