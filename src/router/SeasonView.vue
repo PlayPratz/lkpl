@@ -6,104 +6,66 @@
         <span>Fetching Fantasy Points...</span>
     </div>
     <div v-else>
-        <leaderboard :teampoints="teamPoints" :can-click="canClick" />
+        <leaderboard-table
+            :teams="seasonOverview.teams"
+            :can-click="canClick"
+        />
         <team-breakdown
-            v-for="team in teamPoints.filter((t) => t.retentions !== null)"
-            :key="team.name"
-            :props="{
-                fantasyPlayers,
-                teamPoint: team,
-                replacements: season.replacements,
-                setCanClick: setCanClick,
-            }"
+            v-for="team in seasonOverview.teams.filter(
+                (t) => t.players.length > 0,
+            )"
+            :key="team.team"
+            :team="team"
+            :set-can-click="setCanClick"
         />
     </div>
 </template>
 
 <script setup lang="ts">
-    import { ref, watch } from "vue";
-    import {
-        fetchLatestPoints,
-        type FantasyPlayers,
-    } from "../logic/fantasy-player";
-    import {
-        calculatePointsForTeam,
-        calculatePreviousPointsForTeam,
-        SEASONS,
-        type TeamWithPoints,
-    } from "../logic/teams";
-    import Leaderboard from "../components/LeaderboardTable.vue";
+    import { ref } from "vue";
+    import LeaderboardTable from "../components/LeaderboardTable.vue";
     import TeamBreakdown from "../components/TeamBreakdown.vue";
     import { router } from "@/router";
     import { useRoute } from "vue-router";
+    import {
+        getSeasonOverview,
+        type SeasonOverview,
+        type Team,
+    } from "@/api/fantasy-league";
+    import { loadSeasons } from "@/store/store";
 
     const route = useRoute();
     const year = +route.params.year;
-    const season = SEASONS[year];
 
-    document.title = `Season ${season.year} | LKPL Fantasy`;
+    const canClick = ref<Record<string, boolean>>({});
+    const isLoading = ref(true);
 
+    const season = loadSeasons()!.find((s) => s.season_year == year);
     if (!season) {
         router.replace({ name: "seasons" });
     }
 
-    const canClick = ref<Record<string, boolean>>({});
+    document.title = `Season ${season!.season_year} | LKPL Fantasy`;
 
-    const isLoading = ref(true);
-    const teamPoints: TeamWithPoints[] = [];
-    let fantasyPlayers: FantasyPlayers;
+    let seasonOverview: SeasonOverview;
 
-    fetchLatestPoints(season.year).then((fp) => {
-        console.log(fp);
-        for (const team of season.teams) {
-            teamPoints.push({
-                ...team,
-                points: calculatePointsForTeam(team, fp, season.replacements),
-                previousPoints: calculatePreviousPointsForTeam(
-                    team,
-                    fp,
-                    season.replacements,
-                ),
-            });
-            fantasyPlayers = fp;
-        }
-
-        teamPoints.sort((t1, t2) => t2.points - t1.points);
+    getSeasonOverview(season!.name).then((so) => {
+        seasonOverview = so;
+        seasonOverview.teams.sort((a, b) => a.rank - b.rank);
         isLoading.value = false;
     });
 
-    // function getLatestMatchString() {
-    //     const matchNumber = getLatestMatchNumber();
-    //     switch (matchNumber) {
-    //         case "71": return "Qualifier 1";
-    //         case "72": return "Eliminator";
-    //         case "73": return "Qualifier 2";
-    //         case "74": return "Final";
-    //         default: return `Match ${matchNumber}`;
-    //     }
-    // }
-
-    watch(
-        () => route.params.team,
-        (team) => {
-            console.debug("Team param changed:", team);
-            if (team) {
-                scrollToTeam(team as string);
-            }
-        },
-    );
-
     function scrollToTeam(team: string) {
-        const element = document.getElementById(team.toLocaleLowerCase());
+        const element = document.getElementById(team);
         if (element) {
             element.scrollIntoView({ behavior: "smooth", block: "start" });
         }
     }
 
-    function setCanClick(team: TeamWithPoints) {
-        canClick.value[team.name] = true;
-        if (route.params.team === team.name.toLocaleLowerCase()) {
-            scrollToTeam(team.name);
+    function setCanClick(team: Team) {
+        canClick.value[team.team_owner] = true;
+        if (route.params.team === team.team_owner.toLocaleLowerCase()) {
+            scrollToTeam(team.team_owner);
         }
     }
 </script>
