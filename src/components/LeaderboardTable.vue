@@ -1,7 +1,7 @@
 <template>
     <v-container id="leaderboard">
         <v-sparkline
-            v-if="true"
+            v-if="seasonOverview.commenced"
             type="bar"
             auto-draw
             smooth
@@ -94,14 +94,14 @@
 </template>
 
 <script setup lang="ts">
-    import type { Team } from "@/api/fantasy-league";
+    import type { SeasonOverview } from "@/api/fantasy-league";
     import { RouterLink } from "vue-router";
 
     const props = defineProps<{
-        teams: Team[];
+        seasonOverview: SeasonOverview;
         canClick: Record<string, boolean>;
     }>();
-    const teams = props.teams;
+    const teams = props.seasonOverview.teams;
 
     const leads: Record<string, number> = {};
     for (let i = 0; i < teams.length - 1; i++) {

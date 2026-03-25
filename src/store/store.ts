@@ -1,13 +1,12 @@
 import { type Season } from "@/api/fantasy-league";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const MEMORY_STORE: Record<string, any> = {};
+
 export function saveSeasons(seasons: Season[]) {
-    sessionStorage.setItem("seasons", JSON.stringify(seasons));
+    MEMORY_STORE["seasons"] = seasons;
 }
 
 export function loadSeasons(): Season[] | null {
-    const seasons = sessionStorage.getItem("seasons");
-    if (seasons) {
-        return JSON.parse(seasons);
-    }
-    return null;
+    return MEMORY_STORE["seasons"] ?? null;
 }

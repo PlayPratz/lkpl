@@ -7,13 +7,13 @@
             <v-table hover density="compact">
                 <thead>
                     <tr class="text-primary">
-                        <th style="width: 10%">
+                        <th style="width: 5%">
                             <v-btn
                                 variant="text"
                                 density="compact"
                                 size="32"
                                 :append-icon="getSortIcon('slot')"
-                                @click="() => props.onSortBy('slot')"
+                                @click="() => onSortBy('slot')"
                                 >#</v-btn
                             >
                         </th>
@@ -21,20 +21,18 @@
                             <v-btn
                                 variant="text"
                                 density="compact"
-                                size="32"
                                 :append-icon="getSortIcon('playername')"
                                 min-width="0"
-                                @click="() => props.onSortBy('playername')"
+                                @click="() => onSortBy('playername')"
                                 >Player</v-btn
                             >
                         </th>
-                        <th style="width: 30%">
+                        <th v-if="commenced" style="width: 20%">
                             <v-btn
                                 variant="text"
                                 density="compact"
-                                size="32"
                                 :append-icon="getSortIcon('points')"
-                                @click="() => props.onSortBy('points')"
+                                @click="() => onSortBy('points')"
                                 >Points</v-btn
                             >
                         </th>
@@ -42,9 +40,8 @@
                             <v-btn
                                 variant="text"
                                 density="compact"
-                                size="32"
                                 :append-icon="getSortIcon('price')"
-                                @click="() => props.onSortBy('price')"
+                                @click="() => onSortBy('price')"
                                 >Price (₹cr)</v-btn
                             >
                         </th>
@@ -52,9 +49,8 @@
                             <v-btn
                                 variant="text"
                                 density="compact"
-                                size="32"
                                 :append-icon="getSortIcon('iplTeam')"
-                                @click="() => props.onSortBy('iplTeam')"
+                                @click="() => onSortBy('iplTeam')"
                                 >IPL Team</v-btn
                             >
                         </th>
@@ -112,7 +108,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td>
+                        <td v-if="commenced">
                             <span v-if="q.counted">
                                 {{ q.points }}
                                 <v-badge
@@ -185,6 +181,7 @@
 
     const props = defineProps<{
         team: Team;
+        commenced: number;
         setCanClick: (team: Team) => void;
         sort: SortSettings;
         onSortBy: (parameter: SortParameter) => void;

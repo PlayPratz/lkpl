@@ -1,3 +1,5 @@
+import { loadSeasons, saveSeasons } from "@/store/store";
+
 const SERVER_URL = "";
 const API_SEASON_LIST = `${SERVER_URL}/fantasy_league.api.fantasy_season_list`;
 const API_SEASON = `${SERVER_URL}/fantasy_league.api.fantasy_season`;
@@ -9,6 +11,7 @@ export interface Season {
     squad_size: number;
     overseas_limit: number;
     best_of: number;
+    commenced: number;
 }
 
 export interface Team {
@@ -49,7 +52,12 @@ export interface SeasonOverview extends Season {
 }
 
 export async function getSeasonList(): Promise<Season[]> {
+    if (loadSeasons()) {
+        return loadSeasons()!;
+    }
     const seasons: Season[] = await handleFrappeJsonResponse(API_SEASON_LIST);
+    saveSeasons(seasons);
+
     return seasons;
 }
 

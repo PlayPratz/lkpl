@@ -7,7 +7,7 @@
     </div>
     <div v-else>
         <leaderboard-table
-            :teams="seasonOverview.teams"
+            :season-overview="seasonOverview"
             :can-click="canClick"
         />
         <team-breakdown
@@ -15,6 +15,7 @@
                 (t) => t.players.length > 0,
             )"
             :key="team.team"
+            :commenced="seasonOverview.commenced"
             :team="team"
             :sort="sort"
             :on-sort-by="onSortBy"
@@ -24,17 +25,18 @@
 </template>
 
 <script setup lang="ts">
-    import { ref } from "vue";
+    import { ref, watch } from "vue";
     import LeaderboardTable from "../components/LeaderboardTable.vue";
     import TeamBreakdown from "../components/TeamBreakdown.vue";
     import { router } from "@/router";
     import { useRoute } from "vue-router";
     import {
+        getSeasonList,
         getSeasonOverview,
+        type Season,
         type SeasonOverview,
         type Team,
     } from "@/api/fantasy-league";
-    import { loadSeasons } from "@/store/store";
 
     const route = useRoute();
     const year = +route.params.year;
@@ -42,18 +44,22 @@
     const canClick = ref<Record<string, boolean>>({});
     const isLoading = ref(true);
 
-    const season = loadSeasons()!.find((s) => s.season_year == year);
-    if (!season) {
-        router.replace({ name: "seasons" });
-    }
-
-    document.title = `Season ${season!.season_year} | LKPL Fantasy`;
+    let season: Season;
     let seasonOverview: SeasonOverview;
 
-    getSeasonOverview(season!.name).then((so) => {
-        seasonOverview = so;
-        seasonOverview.teams.sort((a, b) => a.rank - b.rank);
-        isLoading.value = false;
+    getSeasonList().then((sl) => {
+        const s = sl.find((s) => s.season_year == year);
+        if (!s) {
+            router.replace({ name: "seasons" });
+        }
+        season = s!;
+        document.title = `Season ${season!.season_year} | LKPL Fantasy`;
+
+        getSeasonOverview(season!.name).then((so) => {
+            seasonOverview = so;
+            seasonOverview.teams.sort((a, b) => a.rank - b.rank);
+            isLoading.value = false;
+        });
     });
 
     type sortParameter = "slot" | "playername" | "points" | "price" | "iplTeam";
@@ -75,6 +81,14 @@
         }
     }
 
+    watch(
+        () => route.params.team,
+        (team) => {
+            if (team) {
+                scrollToTeam(team as string);
+            }
+        },
+    );
     function scrollToTeam(team: string) {
         const element = document.getElementById(team);
         if (element) {
