@@ -368,7 +368,11 @@ const Season2026: Season = {
         },
         {
             name: "RUTASH",
-            retentions: null,
+            retentions: [
+                { playerId: 9782, retentionNumber: 1 },
+                { playerId: 63751, retentionNumber: 2 },
+                { playerId: 63755, retentionNumber: 3 },
+            ],
             auction: [],
         },
         {
