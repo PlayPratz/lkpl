@@ -4,6 +4,9 @@ const SERVER_URL = "http://103.113.142.141:8000/api/method";
 const API_SEASON_LIST = `${SERVER_URL}/fantasy_league.api.fantasy_season_list`;
 const API_SEASON = `${SERVER_URL}/fantasy_league.api.fantasy_season`;
 
+const CORS_PROXY_CORSLOL = "https://api.cors.lol/?url=";
+const CORS_PROXY_CODETABS = "https://api.codetabs.com/v1/proxy/?quest=";
+
 export interface Season {
     name: string;
     league_name: string;
@@ -79,8 +82,24 @@ export async function getSeasonOverview(
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handleFrappeJsonResponse(endpoint: string): Promise<any> {
-    const response = await fetch(endpoint);
+    const response = await proxyFetch(endpoint, 1);
     const json = await response.json();
     console.log(json);
     return json["message"];
+}
+
+async function proxyFetch(url: string, proxy: number): Promise<Response> {
+    try {
+        const uri = getProxy(proxy) + url;
+        const res = await fetch(uri);
+        return res;
+    } catch {
+        return proxyFetch(url, (proxy + 1) % 2);
+    }
+}
+
+function getProxy(index: number): string {
+    if (index === 0) return CORS_PROXY_CODETABS;
+    else if (index === 1) return CORS_PROXY_CORSLOL;
+    else return "";
 }
