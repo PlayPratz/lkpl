@@ -98,8 +98,8 @@
                                               }
                                             : undefined
                                     "
-                                >
-                                </v-avatar>
+                                />
+
                                 <div class="ms-2 my-auto">
                                     {{ q.player_name }}
                                     <template
@@ -172,22 +172,31 @@
                             {{ q.ipl_team }}
                         </td>
                     </tr>
+                    <tr>
+                        <td colspan="5" class="pa-0 h-0">
+                            <v-divider
+                                thickness="1"
+                                color="primary"
+                                opacity="1"
+                            />
+                        </td>
+                    </tr>
+
                     <tr class="text-primary">
-                        <td></td>
+                        <td class="text-right">{{ team.rank }}</td>
                         <td>TOTAL</td>
                         <td class="text-title-medium">
                             {{ team.points }}
                             <span
-                                v-if="!commenced"
                                 class="d-sm-none text-body-small text-secondary"
-                            >
-                                <br />
+                                ><br />
                                 ₹{{ team.purse_spent }}cr
                             </span>
                         </td>
                         <td class="d-none d-sm-table-cell">
                             ₹{{ team.purse_spent }}cr
                         </td>
+                        <td class="d-none d-sm-table-cell" />
                     </tr>
                 </tbody>
             </v-table>
@@ -197,7 +206,7 @@
 
 <script setup lang="ts">
     import type { SignedPlayer, Team } from "@/api/fantasy-league";
-    import { getPlayerImageUrl } from "@/logic/fantasy-player";
+    import { getPlayerImageUrl } from "@/api/fantasy-ipl";
     import { onMounted } from "vue";
 
     const props = defineProps<{

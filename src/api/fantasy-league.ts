@@ -1,11 +1,9 @@
 import { loadSeasons, saveSeasons } from "@/store/store";
 
-const SERVER_URL = "http://103.113.142.141:8000/api/method";
-const API_SEASON_LIST = `${SERVER_URL}/fantasy_league.api.fantasy_season_list`;
-const API_SEASON = `${SERVER_URL}/fantasy_league.api.fantasy_season`;
-
-const CORS_PROXY_CORSLOL = "https://api.cors.lol/?url=";
-const CORS_PROXY_CODETABS = "https://api.codetabs.com/v1/proxy/?quest=";
+const SERVER_URL = "http://103.113.142.141:8000";
+const API_METHOD = `${SERVER_URL}/api/method`;
+const API_SEASON_LIST = `${API_METHOD}/fantasy_league.api.fantasy_season_list`;
+const API_SEASON = `${API_METHOD}/fantasy_league.api.fantasy_season`;
 
 export interface Season {
     name: string;
@@ -61,6 +59,10 @@ export interface SeasonOverview extends Season {
     teams: Team[];
 }
 
+export function getTeamOwnerImageUrl(team: Team): string {
+    return SERVER_URL + `/files/${team.team}.jpg`;
+}
+
 export async function getSeasonList(): Promise<Season[]> {
     if (loadSeasons()) {
         return loadSeasons()!;
@@ -97,6 +99,9 @@ async function proxyFetch(url: string, proxy: number): Promise<Response> {
         return proxyFetch(url, (proxy + 1) % 2);
     }
 }
+
+const CORS_PROXY_CORSLOL = "https://api.cors.lol/?url=";
+const CORS_PROXY_CODETABS = "https://api.codetabs.com/v1/proxy/?quest=";
 
 function getProxy(index: number): string {
     if (index === 0) return CORS_PROXY_CODETABS;

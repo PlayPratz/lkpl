@@ -1,4 +1,16 @@
-$body-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+
+
+@use 'vuetify/settings' with (
+//   variables go here
+//   $body-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+
+  $body-font-family: "Ubuntu"
+);
+
+
+.body {
+    font-family: 'Ubuntu' !important;
+}
 
 .fl-player-table-header {
     padding-left: 2px;

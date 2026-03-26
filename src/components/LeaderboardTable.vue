@@ -18,18 +18,38 @@
                     <tr class="bg-primary">
                         <template v-if="seasonOverview.commenced">
                             <th>#</th>
-                            <th width="50%">Name</th>
+                            <th width="50%">Team</th>
                             <th>Points</th>
                             <th>Lead</th>
                         </template>
                         <template v-else>
-                            <th>ID</th>
-                            <th width="30%">Name</th>
-                            <th>Purse Remaining (₹cr)</th>
-                            <th>Slots Remaining</th>
-                            <th>Retentions</th>
-                            <th>Auction Buys</th>
-                            <th>Overseas Players</th>
+                            <th class="d-none d-sm-table-cell">ID</th>
+                            <th width="50%">Team</th>
+                            <th>
+                                Purse (₹cr)
+                                <!-- <br />
+                                <v-icon icon="mdi-cash" /> -->
+                            </th>
+                            <th>
+                                Slots
+                                <!-- <br />
+                                <v-icon icon="mdi-playlist-check" /> -->
+                            </th>
+                            <th>
+                                Retn
+                                <!-- <br />
+                                <v-icon icon="mdi-repeat" color="warning" /> -->
+                            </th>
+                            <th>
+                                Buys
+                                <!-- <br />
+                                <v-icon icon="mdi-gavel" color="secondary" /> -->
+                            </th>
+                            <th>
+                                Ovs
+                                <!-- <br />
+                                <v-icon icon="mdi-airplane" /> -->
+                            </th>
                         </template>
                     </tr>
                 </thead>
@@ -53,10 +73,10 @@
                                 ({{ t.recent_rank_gain }})
                             </small>
                         </td>
-                        <td v-else>
+                        <td v-else class="d-none d-sm-table-cell">
                             {{ t.team.slice(6) }}
                         </td>
-                        <td>
+                        <td class="py-2 text-center text-sm-left">
                             <router-link
                                 class="text-primary text-decoration-none"
                                 :to="{
@@ -65,11 +85,20 @@
                                     replace: true,
                                 }"
                             >
-                                {{ t.team_owner.toUpperCase() }}
-                                <v-icon
+                                <v-avatar
+                                    style="width: 48px; height: 48px"
+                                    :image="getTeamOwnerImageUrl(t)"
+                                    border="primary sm opacity-25"
+                                />
+                                <br class="d-sm-none" />
+                                <span class="px-sm-4">
+                                    {{ t.team_owner.toUpperCase() }}</span
+                                >
+
+                                <!-- <v-icon
                                     class="text-secondary"
                                     icon="mdi-arrow-right-thin"
-                                />
+                                /> -->
                             </router-link>
                         </td>
                         <template v-if="seasonOverview.commenced">
@@ -125,7 +154,10 @@
 </template>
 
 <script setup lang="ts">
-    import type { SeasonOverview } from "@/api/fantasy-league";
+    import {
+        getTeamOwnerImageUrl,
+        type SeasonOverview,
+    } from "@/api/fantasy-league";
     import { RouterLink } from "vue-router";
 
     const props = defineProps<{
