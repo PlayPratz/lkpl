@@ -411,11 +411,11 @@ const Season2026: Season = {
         },
         {
             name: "SAAHIL",
-            retentions: null,
+            retentions: [],
             auction: [],
         },
         {
-            name: "SIDDHANTH",
+            name: "SIDDHANT",
             retentions: null,
             auction: [],
         },
