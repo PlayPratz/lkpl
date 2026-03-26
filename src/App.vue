@@ -33,17 +33,7 @@
             :active="!isScrolledTop"
             @click="scrollToTop"
         />
-        <!-- <v-bottom-navigation mode="shift" value="leaderboard" mandatory="force" @update:model-value="(v) => console.log(v)">
-      <v-btn value="leaderboard">
-        <v-icon>mdi-format-list-numbered</v-icon>
-        <span>Leaderboard</span>
-      </v-btn>
 
-      <v-btn value="stats">
-        <v-icon>mdi-chart-bar</v-icon>
-        <span>Stats</span>
-      </v-btn>
-    </v-bottom-navigation> -->
         <v-footer class="text-label-medium" style="max-height: 48px">
             <span class="text-disabled">developed by</span>
             <span class="text-decoration-none on-surface ms-1">
@@ -54,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-    import { THEME } from "./logic/theme";
+    import { THEME } from "./styles/theme";
     import { ref, watch } from "vue";
     import { useRoute } from "vue-router";
     import { useTheme } from "vuetify";

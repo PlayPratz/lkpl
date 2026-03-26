@@ -1,109 +1,106 @@
 <template>
-    <div v-if="isLoading" class="text-center my-16">
+    <div v-if="!seasonOverview" class="text-center my-16">
         <v-progress-circular indeterminate />
         <br />
         <br />
         <span>Fetching Fantasy Points...</span>
     </div>
     <div v-else>
-        <leaderboard :teampoints="teamPoints" :can-click="canClick" />
+        <leaderboard-table
+            :season-overview="seasonOverview"
+            :can-click="canClick"
+        />
         <team-breakdown
-            v-for="team in teamPoints.filter((t) => t.retentions !== null)"
-            :key="team.name"
-            :props="{
-                fantasyPlayers,
-                teamPoint: team,
-                replacements: season.replacements,
-                setCanClick: setCanClick,
-            }"
+            v-for="team in seasonOverview.teams"
+            :key="team.team"
+            :commenced="seasonOverview.commenced"
+            :team="team"
+            :sort="sort"
+            :on-sort-by="onSortBy"
+            :set-can-click="setCanClick"
         />
     </div>
 </template>
 
 <script setup lang="ts">
     import { ref, watch } from "vue";
-    import {
-        fetchLatestPoints,
-        type FantasyPlayers,
-    } from "../logic/fantasy-player";
-    import {
-        calculatePointsForTeam,
-        calculatePreviousPointsForTeam,
-        SEASONS,
-        type TeamWithPoints,
-    } from "../logic/teams";
-    import Leaderboard from "../components/LeaderboardTable.vue";
+    import LeaderboardTable from "../components/LeaderboardTable.vue";
     import TeamBreakdown from "../components/TeamBreakdown.vue";
     import { router } from "@/router";
     import { useRoute } from "vue-router";
+    import {
+        getSeasonList,
+        getSeasonOverview,
+        type Season,
+        type SeasonOverview,
+        type Team,
+    } from "@/api/fantasy-league";
 
     const route = useRoute();
     const year = +route.params.year;
-    const season = SEASONS[year];
-
-    document.title = `Season ${season.year} | LKPL Fantasy`;
-
-    if (!season) {
-        router.replace({ name: "seasons" });
-    }
 
     const canClick = ref<Record<string, boolean>>({});
+    const seasonOverview = ref<SeasonOverview>();
 
-    const isLoading = ref(true);
-    const teamPoints: TeamWithPoints[] = [];
-    let fantasyPlayers: FantasyPlayers;
-
-    fetchLatestPoints(season.year).then((fp) => {
-        console.log(fp);
-        for (const team of season.teams) {
-            teamPoints.push({
-                ...team,
-                points: calculatePointsForTeam(team, fp, season.replacements),
-                previousPoints: calculatePreviousPointsForTeam(
-                    team,
-                    fp,
-                    season.replacements,
-                ),
-            });
-            fantasyPlayers = fp;
+    let season: Season;
+    getSeasonList().then((sn) => {
+        const s = sn.find((sn) => sn.season_year == year);
+        if (s) {
+            season = s;
+            document.title = `Season ${season!.season_year} | LKPL Fantasy`;
+            refreshSeasonOverview();
+        } else {
+            router.replace({ name: "season-select" });
         }
-
-        teamPoints.sort((t1, t2) => t2.points - t1.points);
-        isLoading.value = false;
     });
 
-    // function getLatestMatchString() {
-    //     const matchNumber = getLatestMatchNumber();
-    //     switch (matchNumber) {
-    //         case "71": return "Qualifier 1";
-    //         case "72": return "Eliminator";
-    //         case "73": return "Qualifier 2";
-    //         case "74": return "Final";
-    //         default: return `Match ${matchNumber}`;
-    //     }
-    // }
+    type sortParameter = "slot" | "playername" | "points" | "price" | "iplTeam";
+
+    type SortSettings = {
+        parameter: sortParameter;
+        direction: number;
+    };
+
+    const sort = ref<SortSettings>({ parameter: "slot", direction: 1 });
+    function onSortBy(parameter: sortParameter): void {
+        if (sort.value.parameter == parameter) {
+            sort.value.direction = sort.value.direction * -1;
+        } else {
+            sort.value = {
+                parameter,
+                direction: 1,
+            };
+        }
+    }
 
     watch(
         () => route.params.team,
         (team) => {
-            console.debug("Team param changed:", team);
             if (team) {
                 scrollToTeam(team as string);
             }
         },
     );
-
     function scrollToTeam(team: string) {
-        const element = document.getElementById(team.toLocaleLowerCase());
+        const element = document.getElementById(team);
         if (element) {
             element.scrollIntoView({ behavior: "smooth", block: "start" });
         }
     }
 
-    function setCanClick(team: TeamWithPoints) {
-        canClick.value[team.name] = true;
-        if (route.params.team === team.name.toLocaleLowerCase()) {
-            scrollToTeam(team.name);
+    function setCanClick(team: Team) {
+        canClick.value[team.team_owner] = true;
+        if (route.params.team === team.team_owner.toLocaleLowerCase()) {
+            scrollToTeam(team.team_owner);
         }
+    }
+
+    async function refreshSeasonOverview() {
+        const so = await getSeasonOverview(season!.name);
+        so.teams.sort((a, b) => a.rank - b.rank);
+
+        seasonOverview.value = so;
+
+        setTimeout(refreshSeasonOverview, 10000);
     }
 </script>
