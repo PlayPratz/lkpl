@@ -60,7 +60,7 @@ export interface SeasonOverview extends Season {
 }
 
 export function getTeamOwnerImageUrl(team: Team): string {
-    return SERVER_URL + `/files/${team.team}.jpg`;
+    return getProxyUrl(0, SERVER_URL + `/files/${team.team}.jpg`);
 }
 
 export async function getSeasonList(): Promise<Season[]> {
@@ -92,7 +92,7 @@ async function handleFrappeJsonResponse(endpoint: string): Promise<any> {
 
 async function proxyFetch(url: string, proxy: number): Promise<Response> {
     try {
-        const uri = getProxy(proxy) + url;
+        const uri = getProxyUrl(proxy, url);
         const res = await fetch(uri);
         return res;
     } catch {
@@ -103,8 +103,8 @@ async function proxyFetch(url: string, proxy: number): Promise<Response> {
 const CORS_PROXY_CORSLOL = "https://api.cors.lol/?url=";
 const CORS_PROXY_CODETABS = "https://api.codetabs.com/v1/proxy/?quest=";
 
-function getProxy(index: number): string {
-    if (index === 0) return CORS_PROXY_CODETABS;
-    else if (index === 1) return CORS_PROXY_CORSLOL;
+function getProxyUrl(index: number, url: string): string {
+    if (index === 0) return CORS_PROXY_CODETABS + url;
+    else if (index === 1) return CORS_PROXY_CORSLOL + url;
     else return "";
 }
