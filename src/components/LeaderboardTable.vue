@@ -16,13 +16,15 @@
             <v-table hover>
                 <thead>
                     <tr class="bg-primary">
-                        <th>#</th>
-                        <th>Name</th>
                         <template v-if="seasonOverview.commenced">
+                            <th>#</th>
+                            <th width="50%">Name</th>
                             <th>Points</th>
                             <th>Lead</th>
                         </template>
                         <template v-else>
+                            <th>ID</th>
+                            <th width="30%">Name</th>
                             <th>Purse Remaining (₹cr)</th>
                             <th>Slots Remaining</th>
                             <th>Retentions</th>
@@ -33,7 +35,7 @@
                 </thead>
                 <tbody>
                     <tr v-for="t in props.seasonOverview.teams" :key="t.team">
-                        <td>
+                        <td v-if="seasonOverview.commenced">
                             {{ t.rank }}
                             <small
                                 v-if="t.recent_rank_gain > 0"
@@ -50,6 +52,9 @@
                             <small v-else class="text-grey">
                                 ({{ t.recent_rank_gain }})
                             </small>
+                        </td>
+                        <td v-else>
+                            {{ t.team.slice(6) }}
                         </td>
                         <td>
                             <router-link
