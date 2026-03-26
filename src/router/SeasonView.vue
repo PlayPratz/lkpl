@@ -1,5 +1,5 @@
 <template>
-    <div v-if="isLoading" class="text-center my-16">
+    <div v-if="!seasonOverview" class="text-center my-16">
         <v-progress-circular indeterminate />
         <br />
         <br />
@@ -11,9 +11,7 @@
             :can-click="canClick"
         />
         <team-breakdown
-            v-for="team in seasonOverview.teams.filter(
-                (t) => t.players.length > 0,
-            )"
+            v-for="team in seasonOverview.teams"
             :key="team.team"
             :commenced="seasonOverview.commenced"
             :team="team"
@@ -42,24 +40,18 @@
     const year = +route.params.year;
 
     const canClick = ref<Record<string, boolean>>({});
-    const isLoading = ref(true);
+    const seasonOverview = ref<SeasonOverview>();
 
     let season: Season;
-    let seasonOverview: SeasonOverview;
-
-    getSeasonList().then((sl) => {
-        const s = sl.find((s) => s.season_year == year);
-        if (!s) {
-            router.replace({ name: "seasons" });
+    getSeasonList().then((sn) => {
+        const s = sn.find((sn) => sn.season_year == year);
+        if (s) {
+            season = s;
+            document.title = `Season ${season!.season_year} | LKPL Fantasy`;
+            refreshSeasonOverview();
+        } else {
+            router.replace({ name: "season-select" });
         }
-        season = s!;
-        document.title = `Season ${season!.season_year} | LKPL Fantasy`;
-
-        getSeasonOverview(season!.name).then((so) => {
-            seasonOverview = so;
-            seasonOverview.teams.sort((a, b) => a.rank - b.rank);
-            isLoading.value = false;
-        });
     });
 
     type sortParameter = "slot" | "playername" | "points" | "price" | "iplTeam";
@@ -101,5 +93,14 @@
         if (route.params.team === team.team_owner.toLocaleLowerCase()) {
             scrollToTeam(team.team_owner);
         }
+    }
+
+    async function refreshSeasonOverview() {
+        const so = await getSeasonOverview(season!.name);
+        so.teams.sort((a, b) => a.rank - b.rank);
+
+        seasonOverview.value = so;
+
+        setTimeout(refreshSeasonOverview, 10000);
     }
 </script>

@@ -8,23 +8,31 @@
             line-width="8"
             :gradient="gradient"
             gradient-direction="right"
-            :model-value="teams.map((t) => t.points)"
-            :labels="teams.map((t) => t.team_owner)"
+            :model-value="props.seasonOverview.teams.map((t) => t.points)"
+            :labels="props.seasonOverview.teams.map((t) => t.team_owner)"
             label-size="5"
-        >
-        </v-sparkline>
+        />
         <v-card class="mt-2 bg-primary" border="primary sm opacity-100">
             <v-table hover>
                 <thead>
                     <tr class="bg-primary">
                         <th>#</th>
                         <th>Name</th>
-                        <th>Points</th>
-                        <th>Lead</th>
+                        <template v-if="seasonOverview.commenced">
+                            <th>Points</th>
+                            <th>Lead</th>
+                        </template>
+                        <template v-else>
+                            <th>Purse Remaining (₹cr)</th>
+                            <th>Slots Remaining</th>
+                            <th>Retentions</th>
+                            <th>Auction Buys</th>
+                            <th>Overseas Players</th>
+                        </template>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="t in teams" :key="t.team">
+                    <tr v-for="t in props.seasonOverview.teams" :key="t.team">
                         <td>
                             {{ t.rank }}
                             <small
@@ -45,7 +53,6 @@
                         </td>
                         <td>
                             <router-link
-                                v-if="canClick[t.team_owner]"
                                 class="text-primary text-decoration-none"
                                 :to="{
                                     name: 'season-view',
@@ -59,33 +66,52 @@
                                     icon="mdi-arrow-right-thin"
                                 />
                             </router-link>
-                            <v-else v-else>
-                                {{ t.team_owner.toUpperCase() }}
-                            </v-else>
                         </td>
-                        <td>
-                            {{ t.points }}
-                            <small
-                                v-if="t.recent_points > 0"
-                                class="text-success"
-                            >
-                                (+{{ t.recent_points }})
-                            </small>
-                            <small
-                                v-else-if="t.recent_points < 0"
-                                class="text-error"
-                            >
-                                (-{{ t.recent_points }})
-                            </small>
-                            <small v-else class="text-grey">
-                                ({{ t.recent_points }})
-                            </small>
-                        </td>
-                        <td>
-                            <small v-if="leads[t.team]" class="text-warning">
-                                +{{ leads[t.team] }}
-                            </small>
-                        </td>
+                        <template v-if="seasonOverview.commenced">
+                            <td>
+                                {{ t.points }}
+                                <small
+                                    v-if="t.recent_points > 0"
+                                    class="text-success"
+                                >
+                                    (+{{ t.recent_points }})
+                                </small>
+                                <small
+                                    v-else-if="t.recent_points < 0"
+                                    class="text-error"
+                                >
+                                    (-{{ t.recent_points }})
+                                </small>
+                                <small v-else class="text-grey">
+                                    ({{ t.recent_points }})
+                                </small>
+                            </td>
+                            <td>
+                                <small
+                                    v-if="leads[t.team]"
+                                    class="text-warning"
+                                >
+                                    +{{ leads[t.team] }}
+                                </small>
+                            </td>
+                        </template>
+                        <template v-else>
+                            <td>
+                                {{ t.purse_remaining }}
+                            </td>
+                            <td>
+                                {{ t.slots_remaining }}
+                            </td>
+                            <td>
+                                {{ t.players_retained }}
+                            </td>
+                            <td>
+                                {{ t.players_bought }}
+                            </td>
+                            <td>
+                                {{ t.overseas_players }}
+                            </td>
+                        </template>
                     </tr>
                 </tbody>
             </v-table>
@@ -99,13 +125,13 @@
 
     const props = defineProps<{
         seasonOverview: SeasonOverview;
-        canClick: Record<string, boolean>;
     }>();
-    const teams = props.seasonOverview.teams;
 
     const leads: Record<string, number> = {};
-    for (let i = 0; i < teams.length - 1; i++) {
-        leads[teams[i].team] = teams[i].points - teams[i + 1].points;
+    for (let i = 0; i < props.seasonOverview.teams.length - 1; i++) {
+        leads[props.seasonOverview.teams[i].team] =
+            props.seasonOverview.teams[i].points -
+            props.seasonOverview.teams[i + 1].points;
     }
 
     const gradient = ["#f72047", "#ffd200", "#1feaea"];

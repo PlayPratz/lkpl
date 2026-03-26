@@ -1,6 +1,6 @@
 import { loadSeasons, saveSeasons } from "@/store/store";
 
-const SERVER_URL = "";
+const SERVER_URL = "http://103.113.142.141:8000/api/method";
 const API_SEASON_LIST = `${SERVER_URL}/fantasy_league.api.fantasy_season_list`;
 const API_SEASON = `${SERVER_URL}/fantasy_league.api.fantasy_season`;
 
@@ -23,6 +23,13 @@ export interface Team {
     rank: number;
     previous_rank: number;
     recent_rank_gain: number;
+    players_retained: number;
+    players_bought: number;
+    slots_remaining: number;
+    overseas_players: number;
+    purse_total: number;
+    purse_spent: number;
+    purse_remaining: number;
     players: SignedPlayer[];
 }
 

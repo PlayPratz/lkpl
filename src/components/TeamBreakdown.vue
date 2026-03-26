@@ -21,6 +21,7 @@
                             <v-btn
                                 variant="text"
                                 density="compact"
+                                class="fl-player-table-header"
                                 :append-icon="getSortIcon('playername')"
                                 min-width="0"
                                 @click="() => onSortBy('playername')"
@@ -31,6 +32,7 @@
                             <v-btn
                                 variant="text"
                                 density="compact"
+                                class="fl-player-table-header"
                                 :append-icon="getSortIcon('points')"
                                 @click="() => onSortBy('points')"
                                 >Points</v-btn
@@ -40,6 +42,7 @@
                             <v-btn
                                 variant="text"
                                 density="compact"
+                                class="fl-player-table-header"
                                 :append-icon="getSortIcon('price')"
                                 @click="() => onSortBy('price')"
                                 >Price (₹cr)</v-btn
@@ -49,6 +52,7 @@
                             <v-btn
                                 variant="text"
                                 density="compact"
+                                class="fl-player-table-header"
                                 :append-icon="getSortIcon('iplTeam')"
                                 @click="() => onSortBy('iplTeam')"
                                 >IPL Team</v-btn
@@ -58,7 +62,7 @@
                 </thead>
                 <tbody>
                     <tr
-                        v-for="q in team.players.sort(sortPlayers)"
+                        v-for="q in team.players.slice().sort(sortPlayers)"
                         :key="q.fantasy_player_id"
                     >
                         <td>
@@ -187,8 +191,6 @@
         onSortBy: (parameter: SortParameter) => void;
     }>();
 
-    const team = props.team;
-
     type SortParameter = "slot" | "playername" | "points" | "price" | "iplTeam";
     type SortSettings = {
         parameter: SortParameter;
@@ -196,17 +198,13 @@
     };
 
     onMounted(() => {
-        props.setCanClick(team);
+        props.setCanClick(props.team);
     });
 
     function getPriceString(
         player: SignedPlayer,
         view: "NumberOnly" | "Currency",
     ): string {
-        if (player.type === "Retention") {
-            return "—";
-        }
-
         if (view === "Currency") {
             return `₹${player.price}cr`;
         } else return `${player.price}`;
