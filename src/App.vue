@@ -17,12 +17,15 @@
         </v-btn>
       </a> -->
             <v-btn
-                icon="mdi-theme-light-dark"
-                class="ms-2"
+                class="rounded-pill"
+                variant="outlined"
+                prepend-icon="mdi-theme-light-dark"
                 @click="toggleTheme"
-            />
+            >
+                Dark Mode
+            </v-btn>
         </v-app-bar>
-        <v-main>
+        <v-main class="mb-8">
             <router-view />
         </v-main>
         <v-fab

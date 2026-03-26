@@ -1,5 +1,5 @@
 <template>
-    <v-container id="leaderboard">
+    <v-container id="leaderboard" class="fl-container">
         <v-sparkline
             v-if="seasonOverview.commenced"
             type="bar"

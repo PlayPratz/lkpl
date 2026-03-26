@@ -1,34 +1,33 @@
 <template>
-    <v-container :id="team.team_owner">
+    <v-container :id="team.team_owner" class="fl-container">
         <v-card border="primary sm opacity-100">
             <div class="py-2 text-center bg-primary">
                 {{ team.team_owner.toUpperCase() }}
             </div>
-            <v-table hover density="compact">
+            <v-table hover density="comfortable">
                 <thead>
                     <tr class="text-primary">
-                        <th style="width: 5%">
+                        <th width="5%" class="px-0">
                             <v-btn
                                 variant="text"
                                 density="compact"
-                                size="32"
+                                class="px-0"
                                 :append-icon="getSortIcon('slot')"
+                                text="#"
                                 @click="() => onSortBy('slot')"
-                                >#</v-btn
-                            >
+                            />
                         </th>
-                        <th style="padding-left: 56px">
+                        <th width="100%" style="padding-left: 48px">
                             <v-btn
                                 variant="text"
                                 density="compact"
-                                class="fl-player-table-header"
                                 :append-icon="getSortIcon('playername')"
                                 min-width="0"
                                 @click="() => onSortBy('playername')"
                                 >Player</v-btn
                             >
                         </th>
-                        <th v-if="commenced" style="width: 20%">
+                        <th class="px-2">
                             <v-btn
                                 variant="text"
                                 density="compact"
@@ -38,7 +37,7 @@
                                 >Points</v-btn
                             >
                         </th>
-                        <th class="d-none d-sm-table-cell" style="width: 15%">
+                        <th class="d-none d-sm-table-cell px-2">
                             <v-btn
                                 variant="text"
                                 density="compact"
@@ -48,7 +47,7 @@
                                 >Price (₹cr)</v-btn
                             >
                         </th>
-                        <th class="d-none d-sm-table-cell" style="width: 10%">
+                        <th class="d-none d-sm-table-cell px-2">
                             <v-btn
                                 variant="text"
                                 density="compact"
@@ -65,16 +64,22 @@
                         v-for="q in team.players.slice().sort(sortPlayers)"
                         :key="q.fantasy_player_id"
                     >
-                        <td>
-                            {{ q.slot_number }}
+                        <td class="fl-player-table-item text-right">
                             <v-badge
                                 v-if="q.type === 'Retention'"
                                 inline
                                 icon="mdi-repeat"
                                 color="warning"
                             />
+                            <!-- <v-badge
+                                v-else-if="q.type === 'Auction'"
+                                inline
+                                icon="mdi-gavel"
+                                color="secondary"
+                            /> -->
+                            {{ q.slot_number }}
                         </td>
-                        <td>
+                        <td class="fl-player-table-item">
                             <div class="d-flex align-items-center my-1">
                                 <v-avatar
                                     style="width: 48px; height: 48px"
@@ -112,7 +117,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td v-if="commenced">
+                        <td>
                             <span v-if="q.counted">
                                 {{ q.points }}
                                 <v-badge
@@ -155,7 +160,9 @@
                         <td class="d-none d-sm-table-cell">
                             {{ getPriceString(q, "NumberOnly") }}
                             <v-badge
-                                v-if="q.price_rank === 1"
+                                v-if="
+                                    q.type === 'Auction' && q.price_rank === 1
+                                "
                                 color="secondary"
                                 inline
                                 icon="mdi-currency-rupee"
@@ -168,8 +175,18 @@
                     <tr class="text-primary">
                         <td></td>
                         <td>TOTAL</td>
-                        <td class="text-title-medium" colspan="3">
+                        <td class="text-title-medium">
                             {{ team.points }}
+                            <span
+                                v-if="!commenced"
+                                class="d-sm-none text-body-small text-secondary"
+                            >
+                                <br />
+                                ₹{{ team.purse_spent }}cr
+                            </span>
+                        </td>
+                        <td class="d-none d-sm-table-cell">
+                            ₹{{ team.purse_spent }}cr
                         </td>
                     </tr>
                 </tbody>
