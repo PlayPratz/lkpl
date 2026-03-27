@@ -25,7 +25,7 @@
                 Dark Mode
             </v-btn>
         </v-app-bar>
-        <v-main class="mb-8">
+        <v-main>
             <router-view />
         </v-main>
         <v-fab
@@ -36,8 +36,7 @@
             :active="!isScrolledTop"
             @click="scrollToTop"
         />
-
-        <v-footer class="text-label-medium" style="max-height: 48px">
+        <v-footer class="text-label-medium" style="max-height: 32px">
             <span class="text-disabled">developed by</span>
             <span class="text-decoration-none on-surface ms-1">
                 Pratik Nerurkar

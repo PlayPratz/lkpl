@@ -3,7 +3,7 @@
         <v-progress-circular indeterminate />
         <br />
         <br />
-        <span>Fetching Fantasy Points...</span>
+        <span>Fetching Fantasy Season...</span>
     </div>
     <div v-else>
         <leaderboard-table
@@ -37,22 +37,64 @@
     } from "@/api/fantasy-league";
 
     const route = useRoute();
-    const year = +route.params.year;
 
     const canClick = ref<Record<string, boolean>>({});
     const seasonOverview = ref<SeasonOverview>();
 
-    let season: Season;
-    getSeasonList().then((sn) => {
-        const s = sn.find((sn) => sn.season_year == year);
-        if (s) {
-            season = s;
-            document.title = `Season ${season!.season_year} | LKPL Fantasy`;
-            refreshSeasonOverview();
-        } else {
-            router.replace({ name: "season-select" });
+    watch(
+        () => +route.params.year,
+        async (year, prevYear, onCleanup) => {
+            // const year = route.params.year;
+            // if (year === prevYear) return;
+            seasonOverview.value = undefined;
+            const seasonList = await getSeasonList();
+
+            const season = seasonList.find((sn) => sn.season_year === +year);
+            if (season) {
+                document.title = `Season ${season!.season_year} | LKPL Fantasy`;
+                const controller = { stop: false };
+                refreshSeasonOverview(season, controller);
+                onCleanup(() => {
+                    controller.stop = true;
+                });
+            } else {
+                console.log("Bruh");
+                router.replace({ name: "season-select" });
+            }
+        },
+        { immediate: true },
+    );
+
+    async function refreshSeasonOverview(
+        season: Season,
+        controller: { stop: boolean },
+    ) {
+        if (controller.stop) return;
+
+        const so = await getSeasonOverview(season.name);
+        so.teams.sort((a, b) => a.rank - b.rank);
+        seasonOverview.value = so;
+
+        setTimeout(refreshSeasonOverview, 10000, season, controller);
+    }
+
+    watch(
+        () => route.params.team,
+        (team) => {
+            if (team) {
+                scrollToTeam((team as string).toLowerCase());
+            } else {
+                scrollTo({ top: 0 });
+            }
+        },
+        { immediate: true },
+    );
+    function scrollToTeam(team: string) {
+        const element = document.getElementById(team.toLowerCase());
+        if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "start" });
         }
-    });
+    }
 
     type sortParameter = "slot" | "playername" | "points" | "price" | "iplTeam";
 
@@ -73,34 +115,11 @@
         }
     }
 
-    watch(
-        () => route.params.team,
-        (team) => {
-            if (team) {
-                scrollToTeam(team as string);
-            }
-        },
-    );
-    function scrollToTeam(team: string) {
-        const element = document.getElementById(team);
-        if (element) {
-            element.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-    }
-
     function setCanClick(team: Team) {
         canClick.value[team.team_owner] = true;
-        if (route.params.team === team.team_owner.toLocaleLowerCase()) {
+        const teamParam = route.params.team as string;
+        if (teamParam.toLowerCase() === team.team_owner.toLowerCase()) {
             scrollToTeam(team.team_owner);
         }
-    }
-
-    async function refreshSeasonOverview() {
-        const so = await getSeasonOverview(season!.name);
-        so.teams.sort((a, b) => a.rank - b.rank);
-
-        seasonOverview.value = so;
-
-        setTimeout(refreshSeasonOverview, 10000);
     }
 </script>

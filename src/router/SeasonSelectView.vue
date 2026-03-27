@@ -1,5 +1,5 @@
 <template>
-    <v-list lines="one" class="my-auto text-center">
+    <v-list v-if="seasons" lines="one" class="h-100 text-center">
         <v-list-item
             v-for="season in seasons"
             :key="season.season_year"
@@ -11,6 +11,12 @@
             </v-list-item-title>
         </v-list-item>
     </v-list>
+    <div v-else class="text-center my-16">
+        <v-progress-circular indeterminate />
+        <br />
+        <br />
+        <span>Loading...</span>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -26,7 +32,7 @@
     async function fetchSeasonList(): Promise<Season[]> {
         const sessionSeason = loadSeasons();
         if (sessionSeason) {
-            return sessionSeason;
+            return sessionSeason.reverse();
         }
         const fetchSeason = await getSeasonList();
         saveSeasons(fetchSeason);

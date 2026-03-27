@@ -1,5 +1,5 @@
 <template>
-    <v-container :id="team.team_owner" class="fl-container">
+    <v-container :id="team.team_owner.toLowerCase()" class="fl-container">
         <v-card border="primary sm opacity-100">
             <div class="py-2 text-center bg-primary">
                 {{ team.team_owner.toUpperCase() }}
