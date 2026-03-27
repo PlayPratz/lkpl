@@ -121,7 +121,7 @@
                             <span v-if="q.counted">
                                 {{ q.points }}
                                 <v-badge
-                                    v-if="q.rank === 1"
+                                    v-if="commenced && q.rank === 1"
                                     color="success"
                                     inline
                                     icon="mdi-medal"

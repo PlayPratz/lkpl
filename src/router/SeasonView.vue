@@ -3,7 +3,7 @@
         <v-progress-circular indeterminate />
         <br />
         <br />
-        <span>Fetching Fantasy Season...</span>
+        <span>Loading Fantasy Season...</span>
     </div>
     <div v-else>
         <leaderboard-table
