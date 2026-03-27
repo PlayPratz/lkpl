@@ -117,8 +117,8 @@
 
     function setCanClick(team: Team) {
         canClick.value[team.team_owner] = true;
-        const teamParam = route.params.team as string;
-        if (teamParam.toLowerCase() === team.team_owner.toLowerCase()) {
+        const teamParam = route.params.team as string | undefined;
+        if (teamParam?.toLowerCase() === team.team_owner.toLowerCase()) {
             scrollToTeam(team.team_owner);
         }
     }

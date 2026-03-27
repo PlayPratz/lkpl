@@ -1,5 +1,10 @@
 <template>
-    <v-list v-if="seasons" lines="one" class="h-100 text-center">
+    <v-list
+        v-if="seasons"
+        lines="one"
+        class="h-100 text-center"
+        style="padding-top: 256px"
+    >
         <v-list-item
             v-for="season in seasons"
             :key="season.season_year"
@@ -21,7 +26,6 @@
 
 <script setup lang="ts">
     import { getSeasonList, type Season } from "@/api/fantasy-league";
-    import { loadSeasons, saveSeasons } from "@/store/store";
     import { ref } from "vue";
 
     document.title = `LKPL Fantasy`;
@@ -30,12 +34,7 @@
     fetchSeasonList().then((sns) => (seasons.value = sns));
 
     async function fetchSeasonList(): Promise<Season[]> {
-        const sessionSeason = loadSeasons();
-        if (sessionSeason) {
-            return sessionSeason.reverse();
-        }
-        const fetchSeason = await getSeasonList();
-        saveSeasons(fetchSeason);
-        return fetchSeason;
+        const sessionSeason = await getSeasonList();
+        return sessionSeason;
     }
 </script>
