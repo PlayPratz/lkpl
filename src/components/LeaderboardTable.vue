@@ -58,16 +58,16 @@
                         <td v-if="seasonOverview.commenced">
                             {{ t.rank }}
                             <small
-                                v-if="t.recent_rank_gain < 0"
+                                v-if="t.recent_rank_gain > 0"
                                 class="text-success"
                             >
                                 (+{{ t.recent_rank_gain }})
                             </small>
                             <small
-                                v-else-if="t.recent_rank_gain > 0"
+                                v-else-if="t.recent_rank_gain < 0"
                                 class="text-error"
                             >
-                                (-{{ t.recent_rank_gain }})
+                                ({{ t.recent_rank_gain }})
                             </small>
                             <small v-else class="text-grey">
                                 ({{ t.recent_rank_gain }})
