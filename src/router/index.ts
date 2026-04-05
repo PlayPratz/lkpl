@@ -1,11 +1,11 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 
 import SeasonView from "./SeasonView.vue";
-import SeasonSelectView from "./SeasonSelectView.vue";
+import SelectSeasonView from "./SelectSeasonView.vue";
 
 const routes = [
     // { path: '/lkpl', redirect: '/lkpl/seasons' },
-    { path: "/seasons", name: "season-select", component: SeasonSelectView },
+    { path: "/seasons", name: "select-season", component: SelectSeasonView },
     {
         path: "/seasons/:year/:team?",
         name: "season-view",

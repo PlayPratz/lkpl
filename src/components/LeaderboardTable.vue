@@ -162,14 +162,8 @@
 
     const props = defineProps<{
         seasonOverview: SeasonOverview;
+        leads: Record<string, number>;
     }>();
-
-    const leads: Record<string, number> = {};
-    for (let i = 0; i < props.seasonOverview.teams.length - 1; i++) {
-        leads[props.seasonOverview.teams[i].team] =
-            props.seasonOverview.teams[i].points -
-            props.seasonOverview.teams[i + 1].points;
-    }
 
     const gradient = ["#f72047", "#ffd200", "#1feaea"];
 </script>

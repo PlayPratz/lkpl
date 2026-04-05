@@ -8,6 +8,7 @@
     <div v-else>
         <leaderboard-table
             :season-overview="seasonOverview"
+            :leads="leads"
             :can-click="canClick"
         />
         <team-breakdown
@@ -41,6 +42,8 @@
     const canClick = ref<Record<string, boolean>>({});
     const seasonOverview = ref<SeasonOverview>();
 
+    const leads: Record<string, number> = {};
+
     watch(
         () => +route.params.year,
         async (year, prevYear, onCleanup) => {
@@ -59,7 +62,7 @@
                 });
             } else {
                 console.log("Bruh");
-                router.replace({ name: "season-select" });
+                router.replace({ name: "select-season" });
             }
         },
         { immediate: true },
@@ -73,6 +76,12 @@
 
         const so = await getSeasonOverview(season.name);
         so.teams.sort((a, b) => a.rank - b.rank);
+
+        for (let i = 0; i < so.teams.length - 1; i++) {
+            leads[so.teams[i].team] =
+                so.teams[i].points - so.teams[i + 1].points;
+        }
+
         seasonOverview.value = so;
 
         setTimeout(refreshSeasonOverview, 10000, season, controller);

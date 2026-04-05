@@ -4,7 +4,7 @@
             <v-btn
                 v-if="selectedSeason"
                 icon="mdi-chevron-left"
-                :to="{ name: 'season-select' }"
+                :to="{ name: 'select-season' }"
             />
             <v-app-bar-title v-if="selectedSeason"
                 >Season {{ selectedSeason }}</v-app-bar-title
