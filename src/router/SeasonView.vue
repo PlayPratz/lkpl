@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-    import { ref, watch } from "vue";
+    import { onMounted, onUnmounted, ref, watch } from "vue";
     import LeaderboardTable from "../components/LeaderboardTable.vue";
     import TeamBreakdown from "../components/TeamBreakdown.vue";
     import { router } from "@/router";
@@ -83,7 +83,6 @@
         }
 
         seasonOverview.value = so;
-
         setTimeout(refreshSeasonOverview, 10000, season, controller);
     }
 
@@ -92,15 +91,43 @@
         (team) => {
             if (team) {
                 scrollToTeam((team as string).toLowerCase());
-            } else {
-                scrollTo({ top: 0 });
             }
+            // else {
+            //     scrollTo({ top: 0 });
+            // }
         },
         { immediate: true },
     );
+
+    let shouldResetTeamParam = true;
+
+    function setResetTeamParam() {
+        shouldResetTeamParam = true;
+    }
+
+    function resetTeamParam() {
+        if (shouldResetTeamParam) {
+            router.replace({
+                name: "season-view",
+                params: { team: undefined },
+            });
+        }
+    }
+
+    onMounted(() => {
+        addEventListener("scrollend", setResetTeamParam);
+        addEventListener("scroll", resetTeamParam);
+    });
+
+    onUnmounted(() => {
+        removeEventListener("scrollend", setResetTeamParam);
+        removeEventListener("scroll", resetTeamParam);
+    });
+
     function scrollToTeam(team: string) {
         const element = document.getElementById(team.toLowerCase());
         if (element) {
+            shouldResetTeamParam = false;
             element.scrollIntoView({ behavior: "smooth", block: "start" });
         }
     }
