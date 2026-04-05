@@ -142,7 +142,7 @@
                                 v-else-if="q.recent_points < 0"
                                 class="text-error"
                             >
-                                (-{{ q.recent_points }})
+                                ({{ q.recent_points }})
                             </small>
 
                             <template
