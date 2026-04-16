@@ -114,7 +114,7 @@
                                     v-else-if="t.recent_points < 0"
                                     class="text-error"
                                 >
-                                    (-{{ t.recent_points }})
+                                    ({{ t.recent_points }})
                                 </small>
                                 <small v-else class="text-grey">
                                     ({{ t.recent_points }})
